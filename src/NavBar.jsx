@@ -9,19 +9,28 @@ import {
   NavigationMenuTrigger,
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Menu } from "lucide-react"
 import { Link } from 'react-router'
 import { Button } from "@/components/ui/button"
 
 
 const NavBar = () => {
   return (
-    <nav className='mb-16'>
+    <nav >
       <div className='flex justify-center items-center h-16 fixed top-0  w-full  border-b border-gray-200 bg-white/50 backdrop-blur-xl z-30 transition-all'>
-        <div className='flex justify-between items-center w-full mx-[12.5vw]'>
+        <div className='flex justify-between items-center w-full mx-[12.5vw] max-lg:mx-[2vw]'>
+          <Link to='/'>
           <img src="/src/assets/ine_alumni.jpg" alt="logo" className='h-16'/>
+          </Link>
           
           <div className='flex'>
-          <NavigationMenu>
+          <NavigationMenu className='max-md:hidden'>
             <NavigationMenuList className="space-x-4">
 
               <NavigationMenuItem>
@@ -64,7 +73,7 @@ const NavBar = () => {
                       <Link to="/entreprises" className="block space-y-1">
                         <div className="text-sm font-medium leading-none">Entreprises</div>
                         <p className="text-sm text-muted-foreground">
-                          Répertoire des entreprises partenaires.
+                          Répertoire des entreprises de marché.
                         </p>
                       </Link>
                     </li>
@@ -81,7 +90,9 @@ const NavBar = () => {
             </NavigationMenuList>
           </NavigationMenu>
 
-          <Button className='rounded-2xl font-bold inline cursor-pointer ml-4 shadow-md bg-[#5691cb] hover:bg-[#0c5f95]'>Se connecter</Button>
+          <HamburgerMenu />
+
+          <Button className='rounded-2xl font-bold cursor-pointer ml-4 shadow-md focus:border-2 focus:border-[#0c5f95] flex bg-[#5691cb] hover:bg-[#0c5f95] text-white'>Se connecter</Button>
           </div>
         </div>
       </div>
@@ -90,3 +101,36 @@ const NavBar = () => {
 }
 
 export default NavBar
+
+function HamburgerMenu() {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="md:hidden p-2">
+        <Menu className="h-6 w-6" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-48 mt-2">
+        <DropdownMenuItem>
+          <Link to="/" className="w-full">Accueil</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link to="/evenements" className="w-full">Événements</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link to="/emplois" className="w-full">Emplois</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link to="/stages" className="w-full">Stages</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link to="/laureats" className="w-full">Laureats</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link to="/entreprises" className="w-full">Entreprises</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link to="/ressources" className="w-full">Ressources</Link>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}

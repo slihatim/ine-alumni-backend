@@ -5,7 +5,7 @@ import { Outlet } from 'react-router';
 
 const SharedLayout = () => {
     return (
-        <main className='my-20 bg-amber-300'>
+        <main className='mt-16'>
             <NavBar />
             <Outlet />
             <Footer />
