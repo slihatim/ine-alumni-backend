@@ -26,7 +26,7 @@ const NavBar = () => {
       <div className='flex justify-center items-center h-16 fixed top-0  w-full  border-b border-gray-200 bg-white/50 backdrop-blur-xl z-30 transition-all'>
         <div className='flex justify-between items-center w-full mx-[12.5vw] max-lg:mx-[2vw]'>
           <Link to='/'>
-          <img src="/src/assets/ine_alumni.jpg" alt="logo" className='h-16'/>
+          <img src="/assets/ine_alumni.jpg" alt="logo" className='h-16'/>
           </Link>
           
           <div className='flex'>
