@@ -6,7 +6,7 @@ const Footer = () => {
     <div className='mt-20 bg-slate-900 px-[12vw] pt-11 pb-6 text-white'>
       <div className='flex gap-8 justify-between flex-wrap gap-y-6'>
         <div>
-          <img src="/src/assets/ine_alumni.jpg" alt="ine alumni logo" className='h-20'/>
+          <img src="/assets/ine_alumni.jpg" alt="ine alumni logo" className='h-20'/>
           <h1 className='mt-4 text-xl font-bold'>Ine Alumni</h1>
           <p className='max-w-45 mt-2 text-sm'>Votre réseau professionnel commence ici.</p>
         </div>

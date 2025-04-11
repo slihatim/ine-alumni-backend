@@ -17,11 +17,11 @@ const Section2 = () => {
     <div>
         <div className='mt-16 mx-[12vw] flex flex-wrap gap-y-12 gap-12 justify-center'>
 
-            <Card img='/src/assets/icons/education.svg' title='Offres de Stage' description='Accédez aux opportunités de stages.' linkTitle='Voir les offres' link='/stages'/>
+            <Card img='/assets/icons/education.svg' title='Offres de Stage' description='Accédez aux opportunités de stages.' linkTitle='Voir les offres' link='/stages'/>
 
-            <Card img='/src/assets/icons/education2.svg' title="Offres d'Emploi" description="Découvrez les opportunités d'emploi pour les jeunes diplômés" linkTitle='Explorer les offres' link='/emplois'/>
+            <Card img='/assets/icons/education2.svg' title="Offres d'Emploi" description="Découvrez les opportunités d'emploi pour les jeunes diplômés" linkTitle='Explorer les offres' link='/emplois'/>
 
-            <Card img='/src/assets/icons/education3.svg' title='Événements' description="Calendrier des activités et événements de l'INPT." linkTitle='Voir le calendrier' link='/evenements'/>
+            <Card img='/assets/icons/education3.svg' title='Événements' description="Calendrier des activités et événements de l'INPT." linkTitle='Voir le calendrier' link='/evenements'/>
 
         </div>
 
@@ -29,11 +29,11 @@ const Section2 = () => {
 
         <div className='mt-10 mx-[12vw] flex flex-wrap gap-y-12 gap-12 justify-center'>
 
-            <Card img='/src/assets/icons/education4.svg' title='Bibliothèque en Ligne' description='Accédez à notre collection de ressources pédagogiques.' linkTitle='Voir les ressources' link='/ressources'/>
+            <Card img='/assets/icons/education4.svg' title='Bibliothèque en Ligne' description='Accédez à notre collection de ressources pédagogiques.' linkTitle='Voir les ressources' link='/ressources'/>
 
-            <Card img='/src/assets/icons/education.svg' title="Annuaire des Lauréats" description="Retrouvez et connectez-vous avec les anciens de l'INPT." linkTitle='Explorer' link='/laureats'/>
+            <Card img='/assets/icons/education.svg' title="Annuaire des Lauréats" description="Retrouvez et connectez-vous avec les anciens de l'INPT." linkTitle='Explorer' link='/laureats'/>
 
-            <Card img='/src/assets/icons/education2.svg' title='Annuaire des Entreprises' description="Consultez le répertoire d’entreprises de marché." linkTitle='Consulter' link='/entreprises'/>
+            <Card img='/assets/icons/education2.svg' title='Annuaire des Entreprises' description="Consultez le répertoire d’entreprises de marché." linkTitle='Consulter' link='/entreprises'/>
 
         </div>
     </div>
