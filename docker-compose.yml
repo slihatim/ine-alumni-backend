@@ -1,0 +1,42 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:15
+    environment:
+      POSTGRES_USER: hatim
+      POSTGRES_PASSWORD: hatim
+      PGDATA: /var/lib/postgres/data
+    volumes:
+      - ine-postgres:/var/lib/postgres/data
+    ports:
+      - 5432:5432
+    networks:
+      - ine-net
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - ine-pgadmin:/var/lib/pgadmin
+    networks:
+      - ine-net
+    ports:
+      - 5050:80
+    restart: unless-stopped
+
+
+networks:
+  ine-net:
+    driver: bridge
+    name: ine-net
+
+volumes:
+  ine-postgres:
+    name: ine-postgres
+  ine-pgadmin:
+    name: ine-pgadmin
