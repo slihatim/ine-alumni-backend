@@ -21,5 +21,9 @@ spring:
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
 
+app:
+  jwtSecret: PGChrTET9lZpAAzBpWuXRYKUFSVrUBNbevGtY4M2uEw=
+  jwtExpirationMs: 86400000
+
 server:
   port: 8080

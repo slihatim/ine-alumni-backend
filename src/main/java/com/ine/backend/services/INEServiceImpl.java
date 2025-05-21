@@ -33,4 +33,9 @@ public class INEServiceImpl implements INEService {
         ineRepository.deleteById(id);
         return id;
     }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return ineRepository.existsByEmail(email);
+    }
 }
