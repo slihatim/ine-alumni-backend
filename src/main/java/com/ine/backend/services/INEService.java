@@ -10,4 +10,6 @@ public interface INEService {
     public List<INE> getAllINEs();
     public INE saveINE(INE ine);
     public Long deleteINE(Long id);
+
+    boolean existsByEmail(String email);
 }
