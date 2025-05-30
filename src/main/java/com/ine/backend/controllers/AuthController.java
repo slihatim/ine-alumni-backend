@@ -1,5 +1,7 @@
 package com.ine.backend.controllers;
 
+import com.ine.backend.dto.SignInRequestDto;
+import com.ine.backend.dto.SignInResponseDto;
 import com.ine.backend.dto.SignUpRequestDto;
 import com.ine.backend.exceptions.UserAlreadyExistsException;
 import com.ine.backend.services.AuthService;
@@ -23,5 +25,10 @@ public class AuthController {
         authService.signUpUser(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body("Le compte utilisateur a été créé avec succès !");
+    }
+
+    @PostMapping("/signin")
+    public ResponseEntity<SignInResponseDto> signInUser(@RequestBody @Valid SignInRequestDto requestDto){
+        return ResponseEntity.ok(authService.signInUser(requestDto));
     }
 }

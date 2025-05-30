@@ -26,7 +26,7 @@ public class UserDetailsImpl implements UserDetails {
 
     public static UserDetailsImpl build(INE ine){
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority( ine.getRole().name() ));
+        authorities.add(new SimpleGrantedAuthority(ine.getRole().name() ));
 
         return new UserDetailsImpl(
                 ine.getId(),
