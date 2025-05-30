@@ -22,7 +22,7 @@ spring:
     password: ${spring.datasource.password}
 
 app:
-  jwtSecret: PGChrTET9lZpAAzBpWuXRYKUFSVrUBNbevGtY4M2uEw=
+  jwtSecret: "Zua5SEKuIyJf/ztcXbv2cxuQnmUJLM1Jg/FWABceKyc="
   jwtExpirationMs: 86400000
 
 server:

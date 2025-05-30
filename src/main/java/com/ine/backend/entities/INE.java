@@ -67,7 +67,7 @@ public class INE {
     @NotNull(message = "Le rôle de l'utilisateur est obligatoire.")
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private Role role = Role.USER;
+    private Role role = Role.ROLE_USER;
 
     // for OAuth
     private String linkedinId;
