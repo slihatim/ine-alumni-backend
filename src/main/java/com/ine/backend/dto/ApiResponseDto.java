@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class ApiResponseDto<T> {
     private String message;
     private T response;
-    private Boolean success;
+    private Boolean isSuccess;
 }

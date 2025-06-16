@@ -1,5 +1,6 @@
 package com.ine.backend.controllers;
 
+import com.ine.backend.dto.ApiResponseDto;
 import com.ine.backend.dto.SignInRequestDto;
 import com.ine.backend.dto.SignInResponseDto;
 import com.ine.backend.dto.SignUpRequestDto;
@@ -19,16 +20,20 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<String> registerIne(@RequestBody @Valid SignUpRequestDto requestDto)
+    public ResponseEntity<ApiResponseDto<String>> registerIne(@RequestBody @Valid SignUpRequestDto requestDto)
         throws UserAlreadyExistsException {
 
         authService.signUpUser(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body("Le compte utilisateur a été créé avec succès !");
+                .body(new ApiResponseDto<>("Le compte utilisateur a été créé avec succès !",null, true));
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<SignInResponseDto> signInUser(@RequestBody @Valid SignInRequestDto requestDto){
-        return ResponseEntity.ok(authService.signInUser(requestDto));
+    public ResponseEntity<ApiResponseDto<SignInResponseDto>> signInUser(@RequestBody @Valid SignInRequestDto requestDto){
+        return ResponseEntity.ok(new ApiResponseDto<>(
+                "Authentifié",
+                authService.signInUser(requestDto),
+                true
+        ));
     }
 }
