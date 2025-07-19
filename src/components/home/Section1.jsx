@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router'
 import {
     Carousel,
     CarouselContent,
@@ -18,7 +19,9 @@ const Section1 = () => {
             <div className='max-w-150'>
                 <h1 className='text-4xl font-extrabold text-gray-700'>Bienvenue sur la plateforme des Alumni INPT</h1>
                 <p className='mt-4 text-gray-600'>Connectez-vous avec la communauté INPT, accédez aux opportunités professionnelles, et bénéficiez des ressources partagées.</p>
-                <Button className='rounded-2xl font-bold cursor-pointer mt-4 shadow-md focus:border-2 focus:border-[#0c5f95] flex bg-[#5691cb] hover:bg-[#0c5f95] text-white'>Rejoignez-nous</Button>
+                <Link to='/nouveau-compte'>
+                  <Button className='rounded-2xl font-bold cursor-pointer mt-4 shadow-md focus:border-2 focus:border-[#0c5f95] flex bg-[#5691cb] hover:bg-[#0c5f95] text-white'>Créer un compte</Button>
+                </Link>
             </div>
 
             <Carousel className='max-w-120' opts={{
