@@ -6,7 +6,7 @@ import Section4 from './Section4'
 
 const Home = () => {
   return (
-    <div>
+    <div className='pb-20'>
       <Section1 />
       <Section2 />
       <Section3 />

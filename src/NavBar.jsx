@@ -92,7 +92,9 @@ const NavBar = () => {
 
           <HamburgerMenu />
 
-          <Button className='rounded-2xl font-bold cursor-pointer ml-4 shadow-md focus:border-2 focus:border-[#0c5f95] flex bg-[#5691cb] hover:bg-[#0c5f95] text-white'>Se connecter</Button>
+          <Link to="/se-connecter">
+              <Button className='rounded-2xl font-bold cursor-pointer ml-4 shadow-md focus:border-2 focus:border-[#0c5f95] flex bg-[#5691cb] hover:bg-[#0c5f95] text-white'>Se connecter</Button>
+          </Link>
           </div>
         </div>
       </div>

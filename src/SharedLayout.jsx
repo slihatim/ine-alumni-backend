@@ -7,7 +7,7 @@ const SharedLayout = () => {
     return (
         <main className='mt-16'>
             <NavBar />
-            <Outlet />
+            <Outlet/>
             <Footer />
         </main>
       )

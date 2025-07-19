@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 
 const Footer = () => {
   return (
-    <div className='mt-20 bg-slate-900 px-[12vw] pt-11 pb-6 text-white'>
+    <div className='bg-slate-900 px-[12vw] pt-11 pb-6 text-white'>
       <div className='flex gap-8 justify-between flex-wrap gap-y-6'>
         <div>
           <img src="/assets/ine_alumni.jpg" alt="ine alumni logo" className='h-20'/>
