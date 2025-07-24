@@ -20,7 +20,13 @@ Follow the steps below to setup and run the project on your local machine.
     ```bash
     docker-compose up -d
     ```
-2. Now open the project with your IDE:
+2. Then you need to create a database named `ine` inside the postgres DB
+    ```bash
+    docker exec -it postgres bash
+    psql -U hatim
+    > CREATE DATABASE ine;
+    ```
+3. Now open the project with your IDE:
    - If using `Intellij`, just click on the play button on top right of the IDE.
    - If using other IDEs, run from the terminal:
     ```bash
