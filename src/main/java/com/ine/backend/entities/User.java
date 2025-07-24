@@ -15,15 +15,12 @@ import java.time.LocalDateTime;
 @Builder
 @Setter
 @Getter
-@Entity
-@Table(name = "ines")
-public class INE {
+@MappedSuperclass
+// User Class will handle just authentication logic
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotBlank(message = "Le nom complet ne doit pas être vide.")
-    private String fullName;
 
     @Email(message = "L'adresse email n'est pas valide.")
     @NotBlank(message = "L'adresse email est obligatoire.")
@@ -34,28 +31,6 @@ public class INE {
     @Column(nullable = false)
     @Size(min = 8, message = "Le mot de passe doit contenir au moins 8 caractères.")
     private String password;
-
-    @NotNull(message = "La filière est obligatoire.")
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private Major major;
-
-    @NotNull(message = "L'année de votre promotion est obligatoire.")
-    @Min(value=1961, message = "L'année de promo doit être supérieure ou égale à 1961.")
-    @Max(value=2200, message = "L'année de promo doit être inférieure ou égale à 2200.")
-    @Column(nullable = false)
-    private Integer graduationYear;
-
-    private String phoneNumber;
-    private LocalDate birthDate;
-    @Enumerated(value = EnumType.STRING)
-    private Gender gender;
-    @URL(message = "Le lien LinkedIn doit être une URL valide.")
-    private String linkedinUrl;
-    @URL(message = "Le lien de la photo de profil doit être une URL valide.")
-    private String profilePhotoUrl;
-    private String country;
-    private String city;
 
     @CreationTimestamp
     @Column(updatable = false)
@@ -69,9 +44,13 @@ public class INE {
     @Enumerated(value = EnumType.STRING)
     private Role role = Role.ROLE_USER;
 
-    // for OAuth
+    // for INE : Ine Mail verification
+    // for LAUREAT : Admin Approval verification
+    // for Third Party Users : other logic maybe
+    private Boolean isAccountVerified = false;
+
+    // for OAuth (Will be discussed in upcomming versions)
     private String linkedinId;
     private Boolean isOauthAccount = false;
 
-    private Boolean isEmailVerified = false;
 }

@@ -1,7 +1,7 @@
 package com.ine.backend.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ine.backend.entities.INE;
+import com.ine.backend.entities.User;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,14 +24,14 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
     private List<? extends GrantedAuthority> authorities;
 
-    public static UserDetailsImpl build(INE ine){
+    public static UserDetailsImpl build(User user){
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(ine.getRole().name() ));
+        authorities.add(new SimpleGrantedAuthority(user.getRole().name() ));
 
         return new UserDetailsImpl(
-                ine.getId(),
-                ine.getEmail(),
-                ine.getPassword(),
+                user.getId(),
+                user.getEmail(),
+                user.getPassword(),
                 authorities
         );
     }
