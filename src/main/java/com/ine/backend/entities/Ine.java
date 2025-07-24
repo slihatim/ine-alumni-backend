@@ -6,9 +6,6 @@ import lombok.*;
 
 @Entity
 @DiscriminatorValue("INE")
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @Setter
 @Getter
 // Ine users

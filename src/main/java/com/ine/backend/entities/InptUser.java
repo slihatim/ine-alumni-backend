@@ -45,4 +45,7 @@ public class InptUser extends User{
     private Gender gender;
     private String country;
     private String city;
+
+    @Column(name = "user_type", insertable = false, updatable = false)
+    private String userType;
 }

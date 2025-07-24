@@ -3,8 +3,7 @@ package com.ine.backend.services;
 import com.ine.backend.dto.SignInRequestDto;
 import com.ine.backend.dto.SignInResponseDto;
 import com.ine.backend.dto.SignUpRequestDto;
-import com.ine.backend.entities.User;
-import com.ine.backend.entities.Role;
+import com.ine.backend.entities.*;
 import com.ine.backend.exceptions.UserAlreadyExistsException;
 import com.ine.backend.security.UserDetailsImpl;
 import com.ine.backend.security.jwt.JwtUtils;
@@ -17,6 +16,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,13 +35,22 @@ public class AuthService {
             throw new UserAlreadyExistsException("Échec d'inscription : l'email fourni existe déjà. Essayez de vous connecter ou utilisez un autre email.");
         }
 
-        User user = createUser(requestDto);
+        InptUser user = createUser(requestDto);
         userService.saveUser(user);
 
     }
 
-    private User createUser(SignUpRequestDto requestDto){
-        User user = new User();
+    private InptUser createUser(SignUpRequestDto requestDto){
+        InptUser user;
+
+        LocalDate graduationDate = LocalDate.of( requestDto.getGraduationYear(), Month.JUNE, 1);
+        LocalDate currentDate = LocalDate.now();
+
+        if(currentDate.compareTo(graduationDate) >= 0){
+            user = new Laureat();
+        } else {
+            user = new Ine();
+        }
 
         user.setFullName(requestDto.getFullName());
         user.setEmail(requestDto.getEmail());
@@ -50,7 +60,6 @@ public class AuthService {
         user.setPhoneNumber(requestDto.getPhoneNumber());
         user.setBirthDate(requestDto.getBirthDate());
         user.setGender(requestDto.getGender());
-        user.setLinkedinUrl(requestDto.getLinkedinUrl());
         user.setCountry(requestDto.getCountry());
         user.setCity(requestDto.getCity());
 

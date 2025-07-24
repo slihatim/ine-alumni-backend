@@ -1,6 +1,6 @@
 package com.ine.backend.services;
 
-import com.ine.backend.entities.User;
+import com.ine.backend.entities.InptUser;
 import com.ine.backend.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,17 +14,17 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public User getUser(Long id) {
+    public InptUser getUser(Long id) {
         return userRepository.findById(id).get();
     }
 
     @Override
-    public List<User> getAllUsers() {
+    public List<InptUser> getAllUsers() {
         return userRepository.findAll();
     }
 
     @Override
-    public User saveUser(User user) {
+    public InptUser saveUser(InptUser user) {
         return userRepository.save(user);
     }
 

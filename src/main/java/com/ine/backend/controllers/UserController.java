@@ -1,5 +1,6 @@
 package com.ine.backend.controllers;
 
+import com.ine.backend.entities.InptUser;
 import com.ine.backend.entities.User;
 import com.ine.backend.services.UserService;
 import jakarta.validation.Valid;
@@ -17,19 +18,19 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody @Valid User newUser){
+    public ResponseEntity<InptUser> createUser(@RequestBody @Valid InptUser newUser){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body( userService.saveUser(newUser) );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Long id){
+    public ResponseEntity<InptUser> getUser(@PathVariable Long id){
         return ResponseEntity.ok( userService.getUser(id) );
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers(){
+    public ResponseEntity<List<InptUser>> getAllUsers(){
         return ResponseEntity.ok( userService.getAllUsers() );
     }
 

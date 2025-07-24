@@ -37,8 +37,6 @@ public class SignUpRequestDto {
     private String phoneNumber;
     private LocalDate birthDate;
     private Gender gender;
-    @URL(message = "Le lien LinkedIn doit être une URL valide.")
-    private String linkedinUrl;
     private String country;
     private String city;
 }
