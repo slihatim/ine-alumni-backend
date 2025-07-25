@@ -32,4 +32,8 @@ Follow the steps below to setup and run the project on your local machine.
     ```bash
     ./mvnw spring-boot:run
     ```
-
+If you want to re-run the project, clean the target directory first by running:
+```bash
+./mvnw clean
+```
+and then run the previous command.
