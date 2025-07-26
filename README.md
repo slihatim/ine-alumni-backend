@@ -1,12 +1,26 @@
-# React + Vite
+Follow the steps below to setup and run the project on your local machine.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Project setup
 
-Currently, two official plugins are available:
+- Ensure you have node and npm installed, if not, see: https://nodejs.org/en/download
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Clone the frontend repo
+1. Ensure you have `git` installed and run from your terminal:
+    ```bash
+    git clone https://github.com/slihatim/ine-alumni.git
+    ```
+2. Go inside the directory with:  
+    ```bash
+    cd ine-alumni
+    ```
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# Run the project
+- install first all dependencies:
+    ```bash
+    npm install
+    ```
+- Then run the app:
+    ```bash
+    npm run dev
+    ```
+- You can access the frontend from: http://localhost/5173
