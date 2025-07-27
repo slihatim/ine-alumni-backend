@@ -1,7 +1,6 @@
 package com.ine.backend.controllers;
 
 import com.ine.backend.entities.InptUser;
-import com.ine.backend.entities.User;
 import com.ine.backend.services.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

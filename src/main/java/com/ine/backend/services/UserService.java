@@ -1,7 +1,6 @@
 package com.ine.backend.services;
 
 import com.ine.backend.entities.InptUser;
-import com.ine.backend.entities.User;
 
 import java.util.List;
 
