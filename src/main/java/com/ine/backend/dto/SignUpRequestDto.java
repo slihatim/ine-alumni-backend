@@ -6,7 +6,6 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.URL;
 
 import java.time.LocalDate;
 
@@ -37,8 +36,6 @@ public class SignUpRequestDto {
     private String phoneNumber;
     private LocalDate birthDate;
     private Gender gender;
-    @URL(message = "Le lien LinkedIn doit être une URL valide.")
-    private String linkedinUrl;
     private String country;
     private String city;
 }

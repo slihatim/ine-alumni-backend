@@ -3,8 +3,7 @@ package com.ine.backend.services;
 import com.ine.backend.dto.SignInRequestDto;
 import com.ine.backend.dto.SignInResponseDto;
 import com.ine.backend.dto.SignUpRequestDto;
-import com.ine.backend.entities.INE;
-import com.ine.backend.entities.Role;
+import com.ine.backend.entities.*;
 import com.ine.backend.exceptions.UserAlreadyExistsException;
 import com.ine.backend.security.UserDetailsImpl;
 import com.ine.backend.security.jwt.JwtUtils;
@@ -17,44 +16,54 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class AuthService {
-    private INEService ineService;
+    private UserService userService;
     private PasswordEncoder passwordEncoder;
 
     private AuthenticationManager authenticationManager;
     private JwtUtils jwtUtils;
 
     public void signUpUser(SignUpRequestDto requestDto) throws UserAlreadyExistsException{
-        if(ineService.existsByEmail(requestDto.getEmail())){
+        if(userService.existsByEmail(requestDto.getEmail())){
             throw new UserAlreadyExistsException("Échec d'inscription : l'email fourni existe déjà. Essayez de vous connecter ou utilisez un autre email.");
         }
 
-        INE ine = createIne(requestDto);
-        ineService.saveINE(ine);
+        InptUser user = createUser(requestDto);
+        userService.saveUser(user);
 
     }
 
-    private INE createIne(SignUpRequestDto requestDto){
-        INE ine = new INE();
+    private InptUser createUser(SignUpRequestDto requestDto){
+        InptUser user;
 
-        ine.setFullName(requestDto.getFullName());
-        ine.setEmail(requestDto.getEmail());
-        ine.setPassword(passwordEncoder.encode(requestDto.getPassword()));
-        ine.setMajor(requestDto.getMajor());
-        ine.setGraduationYear(requestDto.getGraduationYear());
-        ine.setPhoneNumber(requestDto.getPhoneNumber());
-        ine.setBirthDate(requestDto.getBirthDate());
-        ine.setGender(requestDto.getGender());
-        ine.setLinkedinUrl(requestDto.getLinkedinUrl());
-        ine.setCountry(requestDto.getCountry());
-        ine.setCity(requestDto.getCity());
+        LocalDate graduationDate = LocalDate.of( requestDto.getGraduationYear(), Month.JUNE, 1);
+        LocalDate currentDate = LocalDate.now();
 
-        return ine;
+        if(currentDate.compareTo(graduationDate) >= 0){
+            user = new Laureat();
+        } else {
+            user = new Ine();
+        }
+
+        user.setFullName(requestDto.getFullName());
+        user.setEmail(requestDto.getEmail());
+        user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+        user.setMajor(requestDto.getMajor());
+        user.setGraduationYear(requestDto.getGraduationYear());
+        user.setPhoneNumber(requestDto.getPhoneNumber());
+        user.setBirthDate(requestDto.getBirthDate());
+        user.setGender(requestDto.getGender());
+        user.setCountry(requestDto.getCountry());
+        user.setCity(requestDto.getCity());
+
+        return user;
     }
 
     public SignInResponseDto signInUser(SignInRequestDto requestDto){
