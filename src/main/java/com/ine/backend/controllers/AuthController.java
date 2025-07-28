@@ -20,7 +20,7 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponseDto<String>> registerIne(@RequestBody @Valid SignUpRequestDto requestDto)
+    public ResponseEntity<ApiResponseDto<String>> registerUser(@RequestBody @Valid SignUpRequestDto requestDto)
         throws UserAlreadyExistsException {
 
         authService.signUpUser(requestDto);

@@ -22,10 +22,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = UserAlreadyExistsException.class)
-    public ResponseEntity<String> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
+    public ResponseEntity<ApiResponseDto<String>> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
-                .body(ex.getMessage());
+                .body(new ApiResponseDto<>(ex.getMessage(), null, false));
     }
 
     @ExceptionHandler(value = Exception.class)
