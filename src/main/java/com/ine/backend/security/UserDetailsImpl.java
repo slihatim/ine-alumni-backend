@@ -25,8 +25,7 @@ public class UserDetailsImpl implements UserDetails {
     private List<? extends GrantedAuthority> authorities;
 
     public static UserDetailsImpl build(User user){
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(user.getRole().name() ));
+        List<SimpleGrantedAuthority> authorities = user.getRole().getAuthorities();
 
         return new UserDetailsImpl(
                 user.getId(),
