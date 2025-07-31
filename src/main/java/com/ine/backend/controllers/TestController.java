@@ -11,27 +11,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/test")
 public class TestController {
 
-    @GetMapping("/user")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    public String user(){
-        return "user role";
+    @GetMapping("/events/read")
+    @PreAuthorize("hasAuthority('events:read')")
+    public String readAnyEvent(){
+        return "read any event";
     }
 
-    @GetMapping("/admin")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String admin(){
-        return "admin role";
+    @GetMapping("/events/update-own-event")
+    @PreAuthorize("hasAuthority('events:update:self')")
+    public String updateOwnEvent(){
+        return "update own event";
     }
 
-    @GetMapping("/super-admin")
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
-    public String superAdmin(){
-        return "super admin role";
+    @GetMapping("/events/delete-own-event")
+    @PreAuthorize("hasAuthority('events:delete:self')")
+    public String deleteOwnEvent(){
+        return "delete own event";
     }
 
-    @GetMapping("/user-or-admin")
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
-    public String userOrAdmin(){
-        return "user or admin role";
-    }
 }

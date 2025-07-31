@@ -74,15 +74,16 @@ public class AuthService {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
+        String role = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+                .filter(authority -> authority.startsWith("ROLE_"))
+                .findFirst().orElse(null);
 
         SignInResponseDto signInResponseDto = SignInResponseDto.builder()
                 .email(userDetails.getUsername())
                 .token(jwt)
                 .type("Bearer")
-                .role(Role.valueOf(roles.get(0)))
+                .role(Role.valueOf(role))
                 .build();
 
         return signInResponseDto;
