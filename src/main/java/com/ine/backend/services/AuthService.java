@@ -1,13 +1,8 @@
 package com.ine.backend.services;
 
-import com.ine.backend.dto.SignInRequestDto;
-import com.ine.backend.dto.SignInResponseDto;
-import com.ine.backend.dto.SignUpRequestDto;
-import com.ine.backend.entities.*;
-import com.ine.backend.exceptions.UserAlreadyExistsException;
-import com.ine.backend.security.UserDetailsImpl;
-import com.ine.backend.security.jwt.JwtUtils;
-import lombok.AllArgsConstructor;
+import java.time.LocalDate;
+import java.time.Month;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,76 +11,86 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.ine.backend.dto.SignInRequestDto;
+import com.ine.backend.dto.SignInResponseDto;
+import com.ine.backend.dto.SignUpRequestDto;
+import com.ine.backend.entities.*;
+import com.ine.backend.exceptions.UserAlreadyExistsException;
+import com.ine.backend.security.UserDetailsImpl;
+import com.ine.backend.security.jwt.JwtUtils;
+
+import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
 public class AuthService {
-    private UserService userService;
-    private PasswordEncoder passwordEncoder;
+  private UserService userService;
+  private PasswordEncoder passwordEncoder;
 
-    private AuthenticationManager authenticationManager;
-    private JwtUtils jwtUtils;
+  private AuthenticationManager authenticationManager;
+  private JwtUtils jwtUtils;
 
-    public void signUpUser(SignUpRequestDto requestDto) throws UserAlreadyExistsException{
-        if(userService.existsByEmail(requestDto.getEmail())){
-            throw new UserAlreadyExistsException("Échec d'inscription : l'email fourni existe déjà. Essayez de vous connecter ou utilisez un autre email.");
-        }
-
-        InptUser user = createUser(requestDto);
-        userService.saveUser(user);
-
+  public void signUpUser(SignUpRequestDto requestDto) throws UserAlreadyExistsException {
+    if (userService.existsByEmail(requestDto.getEmail())) {
+      throw new UserAlreadyExistsException(
+          "Échec d'inscription : l'email fourni existe déjà. Essayez de vous connecter ou utilisez un autre email.");
     }
 
-    private InptUser createUser(SignUpRequestDto requestDto){
-        InptUser user;
+    InptUser user = createUser(requestDto);
+    userService.saveUser(user);
+  }
 
-        LocalDate graduationDate = LocalDate.of( requestDto.getGraduationYear(), Month.JUNE, 1);
-        LocalDate currentDate = LocalDate.now();
+  private InptUser createUser(SignUpRequestDto requestDto) {
+    InptUser user;
 
-        if(currentDate.compareTo(graduationDate) >= 0){
-            user = new Laureat();
-        } else {
-            user = new Ine();
-        }
+    LocalDate graduationDate = LocalDate.of(requestDto.getGraduationYear(), Month.JUNE, 1);
+    LocalDate currentDate = LocalDate.now();
 
-        user.setFullName(requestDto.getFullName());
-        user.setEmail(requestDto.getEmail());
-        user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
-        user.setMajor(requestDto.getMajor());
-        user.setGraduationYear(requestDto.getGraduationYear());
-        user.setPhoneNumber(requestDto.getPhoneNumber());
-        user.setBirthDate(requestDto.getBirthDate());
-        user.setGender(requestDto.getGender());
-        user.setCountry(requestDto.getCountry());
-        user.setCity(requestDto.getCity());
-
-        return user;
+    if (currentDate.compareTo(graduationDate) >= 0) {
+      user = new Laureat();
+    } else {
+      user = new Ine();
     }
 
-    public SignInResponseDto signInUser(SignInRequestDto requestDto){
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(requestDto.getEmail(), requestDto.getPassword()));
+    user.setFullName(requestDto.getFullName());
+    user.setEmail(requestDto.getEmail());
+    user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+    user.setMajor(requestDto.getMajor());
+    user.setGraduationYear(requestDto.getGraduationYear());
+    user.setPhoneNumber(requestDto.getPhoneNumber());
+    user.setBirthDate(requestDto.getBirthDate());
+    user.setGender(requestDto.getGender());
+    user.setCountry(requestDto.getCountry());
+    user.setCity(requestDto.getCity());
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
+    return user;
+  }
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String role = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .filter(authority -> authority.startsWith("ROLE_"))
-                .findFirst().orElse(null);
+  public SignInResponseDto signInUser(SignInRequestDto requestDto) {
+    Authentication authentication =
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(
+                requestDto.getEmail(), requestDto.getPassword()));
 
-        SignInResponseDto signInResponseDto = SignInResponseDto.builder()
-                .email(userDetails.getUsername())
-                .token(jwt)
-                .type("Bearer")
-                .role(Role.valueOf(role))
-                .build();
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+    String jwt = jwtUtils.generateJwtToken(authentication);
 
-        return signInResponseDto;
-    }
+    UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+    String role =
+        userDetails.getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority)
+            .filter(authority -> authority.startsWith("ROLE_"))
+            .findFirst()
+            .orElse(null);
+
+    SignInResponseDto signInResponseDto =
+        SignInResponseDto.builder()
+            .email(userDetails.getUsername())
+            .token(jwt)
+            .type("Bearer")
+            .role(Role.valueOf(role))
+            .build();
+
+    return signInResponseDto;
+  }
 }
