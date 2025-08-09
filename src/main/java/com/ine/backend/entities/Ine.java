@@ -9,5 +9,4 @@ import lombok.*;
 @Setter
 @Getter
 // Ine users
-public class Ine extends InptUser{
-}
+public class Ine extends InptUser {}

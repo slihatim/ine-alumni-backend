@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ApiResponseDto<T> {
-    private String message;
-    private T response;
-    private Boolean isSuccess;
+  private String message;
+  private T response;
+  private Boolean isSuccess;
 }

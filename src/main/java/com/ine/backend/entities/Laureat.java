@@ -10,8 +10,8 @@ import lombok.*;
 @Setter
 @Getter
 // Laureat users
-public class Laureat extends InptUser{
-    @ManyToOne
-    @JoinColumn(name = "current_company_id")
-    private Company currentCompany;
+public class Laureat extends InptUser {
+  @ManyToOne
+  @JoinColumn(name = "current_company_id")
+  private Company currentCompany;
 }
