@@ -2,10 +2,10 @@ spring:
   application:
     name: ine-alumni-backend
   datasource:
-    url: jdbc:postgresql://localhost:5432/ine
-    username: hatim
-    password: hatim
-    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL:jdbc:h2:mem:ine;DB_CLOSE_DELAY=-1;MODE=PostgreSQL}
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:}
+    driver-class-name: ${DB_DRIVER:org.h2.Driver}
   jpa:
     hibernate:
       ddl-auto: update
@@ -14,12 +14,7 @@ spring:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   flyway:
-    baseline-on-migrate: true
     enabled: false
-    baseline-description: "init"
-    baseline-version: 0
-    user: ${spring.datasource.username}
-    password: ${spring.datasource.password}
 
 app:
   jwtSecret: "Zua5SEKuIyJf/ztcXbv2cxuQnmUJLM1Jg/FWABceKyc="

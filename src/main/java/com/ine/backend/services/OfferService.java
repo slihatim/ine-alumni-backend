@@ -11,5 +11,3 @@ public interface OfferService {
     OfferResponseDto createOffer(OfferRequestDto requestDto);
     void applyToOffer(Long offerId, InptUser applicant, String message, String resumeUrl);
 }
-
-
