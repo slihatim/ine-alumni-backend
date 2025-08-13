@@ -11,24 +11,33 @@ import com.ine.backend.dto.SignInResponseDto;
 import com.ine.backend.dto.SignUpRequestDto;
 import com.ine.backend.exceptions.UserAlreadyExistsException;
 import com.ine.backend.services.AuthService;
-
+import com.ine.backend.security.EmailVerificationService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/v1/auth")
+@AllArgsConstructor
 public class AuthController {
-	@Autowired
-	private AuthService authService;
+    private AuthService authService;
+    private EmailVerificationService emailVerificationService;
 
 	@PostMapping("/signup")
 	public ResponseEntity<ApiResponseDto<String>> registerUser(@RequestBody @Valid SignUpRequestDto requestDto)
 			throws UserAlreadyExistsException {
 
-		authService.signUpUser(requestDto);
-		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(new ApiResponseDto<>("Le compte utilisateur a été créé avec succès !", null, true));
-	}
+        authService.signUpUser(requestDto);
+
+        // Directly after registering the user, we send the verification email
+        emailVerificationService.sendVerificationToken(requestDto.getEmail());
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponseDto<>("Le compte utilisateur a été créé avec succès !",null, true));
+    }
 
 	@PostMapping("/signin")
 	public ResponseEntity<ApiResponseDto<SignInResponseDto>> signInUser(

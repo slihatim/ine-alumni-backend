@@ -43,12 +43,15 @@ public class User {
 	@Enumerated(value = EnumType.STRING)
 	private Role role = Role.ROLE_USER;
 
-	// for INE : Ine Mail verification
-	// for LAUREAT : Admin Approval verification
-	// for Third Party Users : other logic maybe
-	private Boolean isAccountVerified = false;
+    // for INE : Ine Mail verification
+    // for LAUREAT : Admin Approval verification
+    // for Third Party Users : other logic maybe
+    private Boolean isAccountVerified = false;
 
-	// for OAuth (Will be discussed in upcomming versions)
-	private String linkedinId;
-	private Boolean isOauthAccount = false;
+    // Personel email verification
+    private Boolean isEmailVerified = false;
+
+    // for OAuth (Will be discussed in upcomming versions)
+    private String linkedinId;
+    private Boolean isOauthAccount = false;
 }

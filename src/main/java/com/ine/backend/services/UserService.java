@@ -13,5 +13,6 @@ public interface UserService {
 
 	public Long deleteUser(Long id);
 
-	boolean existsByEmail(String email);
+    boolean existsByEmail(String email);
+    public InptUser findByEmail(String email);
 }
