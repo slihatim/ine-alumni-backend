@@ -5,9 +5,10 @@ services:
     environment:
       POSTGRES_USER: hatim
       POSTGRES_PASSWORD: hatim
-      PGDATA: /var/lib/postgres/data
+      POSTGRES_DB: ine
+      PGDATA: /var/lib/postgresql/data
     volumes:
-      - ine-postgres:/var/lib/postgres/data
+      - ine-postgres:/var/lib/postgresql/data
     ports:
       - 5432:5432
     networks:
