@@ -48,7 +48,7 @@ public class User {
     // for Third Party Users : other logic maybe
     private Boolean isAccountVerified = false;
 
-    // Personel email verification
+    // Personal email verification
     private Boolean isEmailVerified = false;
 
     // for OAuth (Will be discussed in upcomming versions)

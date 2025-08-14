@@ -1,7 +1,6 @@
 package com.ine.backend.security;
 
 import com.ine.backend.entities.User;
-import com.ine.backend.exceptions.EmailVerificationException;
 import com.ine.backend.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

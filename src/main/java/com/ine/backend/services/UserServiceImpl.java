@@ -45,4 +45,10 @@ public class UserServiceImpl implements UserService {
     public InptUser findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
+
+    @Override
+    public boolean isEmailVerified(String email) {
+        return userRepository.existsByEmailAndIsEmailVerified(email, true);
+    }
+
 }

@@ -15,4 +15,5 @@ public interface UserService {
 
     boolean existsByEmail(String email);
     public InptUser findByEmail(String email);
+    public boolean isEmailVerified(String email);
 }
