@@ -43,10 +43,10 @@ public class User {
 	@Enumerated(value = EnumType.STRING)
 	private Role role = Role.ROLE_USER;
 
-    // for INE : Ine Mail verification
-    // for LAUREAT : Admin Approval verification
-    // for Third Party Users : other logic maybe
-    private Boolean isAccountVerified = false;
+  // for INE : Ine Mail verification
+  // for LAUREAT : Admin Approval verification
+  // for Third Party Users : other logic maybe
+  private Boolean isAccountVerified = false;
 
     // Personal email verification
     private Boolean isEmailVerified = false;
