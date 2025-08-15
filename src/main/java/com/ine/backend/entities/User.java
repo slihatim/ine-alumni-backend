@@ -48,10 +48,10 @@ public class User {
 	// for Third Party Users : other logic maybe
 	private Boolean isAccountVerified = false;
 
-    // Personal email verification
-    private Boolean isEmailVerified = false;
+	// Personal email verification
+	private Boolean isEmailVerified = false;
 
-    // for OAuth (Will be discussed in upcomming versions)
-    private String linkedinId;
-    private Boolean isOauthAccount = false;
+	// for OAuth (Will be discussed in upcomming versions)
+	private String linkedinId;
+	private Boolean isOauthAccount = false;
 }
