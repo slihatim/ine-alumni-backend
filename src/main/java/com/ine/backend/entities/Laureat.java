@@ -11,7 +11,7 @@ import lombok.*;
 @Getter
 // Laureat users
 public class Laureat extends InptUser {
-  @ManyToOne
-  @JoinColumn(name = "current_company_id")
-  private Company currentCompany;
+	@ManyToOne
+	@JoinColumn(name = "current_company_id")
+	private Company currentCompany;
 }

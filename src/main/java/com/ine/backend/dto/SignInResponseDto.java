@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SignInResponseDto {
-  private String email;
-  private String token;
-  private String type;
-  private Role role;
+	private String email;
+	private String token;
+	private String type;
+	private Role role;
 }

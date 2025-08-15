@@ -13,25 +13,23 @@ import com.ine.backend.dto.ApiResponseDto;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler(value = MethodArgumentNotValidException.class)
-  public ResponseEntity<ApiResponseDto<String>> handleMethodArgumentNotValidException(
-      MethodArgumentNotValidException ex) {
-    return ResponseEntity.badRequest().body(new ApiResponseDto(ex.getMessage(), null, false));
-  }
+	@ExceptionHandler(value = MethodArgumentNotValidException.class)
+	public ResponseEntity<ApiResponseDto<String>> handleMethodArgumentNotValidException(
+			MethodArgumentNotValidException ex) {
+		return ResponseEntity.badRequest().body(new ApiResponseDto(ex.getMessage(), null, false));
+	}
 
-  @ExceptionHandler(value = UserAlreadyExistsException.class)
-  public ResponseEntity<ApiResponseDto<String>> handleUserAlreadyExistsException(
-      UserAlreadyExistsException ex) {
-    return ResponseEntity.status(HttpStatus.CONFLICT)
-        .body(new ApiResponseDto<>(ex.getMessage(), null, false));
-  }
+	@ExceptionHandler(value = UserAlreadyExistsException.class)
+	public ResponseEntity<ApiResponseDto<String>> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponseDto<>(ex.getMessage(), null, false));
+	}
 
-  @ExceptionHandler(value = Exception.class)
-  public ResponseEntity<ApiResponseDto<String>> handleException(Exception ex) {
-    Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-    logger.error(ex.getMessage());
+	@ExceptionHandler(value = Exception.class)
+	public ResponseEntity<ApiResponseDto<String>> handleException(Exception ex) {
+		Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+		logger.error(ex.getMessage());
 
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-        .body(new ApiResponseDto<>("Erreur, Veuillez ressayer.", null, false));
-  }
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new ApiResponseDto<>("Erreur, Veuillez ressayer.", null, false));
+	}
 }

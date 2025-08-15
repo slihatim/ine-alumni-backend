@@ -18,21 +18,21 @@ import jakarta.validation.Valid;
 @CrossOrigin("*")
 @RequestMapping("/api/v1/auth")
 public class AuthController {
-  @Autowired private AuthService authService;
+	@Autowired
+	private AuthService authService;
 
-  @PostMapping("/signup")
-  public ResponseEntity<ApiResponseDto<String>> registerUser(
-      @RequestBody @Valid SignUpRequestDto requestDto) throws UserAlreadyExistsException {
+	@PostMapping("/signup")
+	public ResponseEntity<ApiResponseDto<String>> registerUser(@RequestBody @Valid SignUpRequestDto requestDto)
+			throws UserAlreadyExistsException {
 
-    authService.signUpUser(requestDto);
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body(new ApiResponseDto<>("Le compte utilisateur a été créé avec succès !", null, true));
-  }
+		authService.signUpUser(requestDto);
+		return ResponseEntity.status(HttpStatus.CREATED)
+				.body(new ApiResponseDto<>("Le compte utilisateur a été créé avec succès !", null, true));
+	}
 
-  @PostMapping("/signin")
-  public ResponseEntity<ApiResponseDto<SignInResponseDto>> signInUser(
-      @RequestBody @Valid SignInRequestDto requestDto) {
-    return ResponseEntity.ok(
-        new ApiResponseDto<>("Authentifié", authService.signInUser(requestDto), true));
-  }
+	@PostMapping("/signin")
+	public ResponseEntity<ApiResponseDto<SignInResponseDto>> signInUser(
+			@RequestBody @Valid SignInRequestDto requestDto) {
+		return ResponseEntity.ok(new ApiResponseDto<>("Authentifié", authService.signInUser(requestDto), true));
+	}
 }

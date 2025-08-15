@@ -129,14 +129,17 @@
                             <include>src/main/java/**/*.java</include>
                             <include>src/test/java/**/*.java</include>
                         </includes>
-                        <googleJavaFormat>
-                            <version>1.28.0</version>
-                            <style>GOOGLE</style>
-                        </googleJavaFormat>
-                        <removeUnusedImports />
-                        <importOrder>
-                            <order>java,javax,org,com,com.ine.backend</order>
+
+                        <eclipse>
+                            <!-- Optional: Specify the Eclipse JDT version to use. -->
+                            <version>4.26</version>
+                        </eclipse>
+                        
+                        <importOrder>  
+                            <order>java,javax,org,com,com.ine.backend,</order>  
                         </importOrder>
+
+                        <removeUnusedImports /> 
                     </java>
                 </configuration>
                 <executions>
