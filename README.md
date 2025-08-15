@@ -37,3 +37,13 @@ If you want to re-run the project, clean the target directory first by running:
 ./mvnw clean
 ```
 and then run the previous command.
+
+# Formatting
+1. To check if your code is formatted run:
+    ```bash
+    ./mvnw spotless:check
+    ```
+2. To format your code:
+    ```bash
+    ./mvnw spotless:apply
+    ```
