@@ -41,14 +41,17 @@ public class User {
 	@NotNull(message = "Le rôle de l'utilisateur est obligatoire.")
 	@Column(nullable = false)
 	@Enumerated(value = EnumType.STRING)
+	@Builder.Default
 	private Role role = Role.ROLE_USER;
 
 	// for INE : Ine Mail verification
 	// for LAUREAT : Admin Approval verification
 	// for Third Party Users : other logic maybe
+	@Builder.Default
 	private Boolean isAccountVerified = false;
 
 	// for OAuth (Will be discussed in upcomming versions)
 	private String linkedinId;
+	@Builder.Default
 	private Boolean isOauthAccount = false;
 }
