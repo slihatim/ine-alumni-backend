@@ -21,6 +21,18 @@ spring:
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hatim.slimani.19@gmail.com
+    password: qihixwerqwotokir
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 app:
   jwtSecret: "Zua5SEKuIyJf/ztcXbv2cxuQnmUJLM1Jg/FWABceKyc="
   jwtExpirationMs: 86400000

@@ -50,6 +50,9 @@ public class User {
 	@Builder.Default
 	private Boolean isAccountVerified = false;
 
+	// Personal email verification
+	private Boolean isEmailVerified = false;
+
 	// for OAuth (Will be discussed in upcomming versions)
 	private String linkedinId;
 	@Builder.Default

@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.ine.backend.dto.ApiResponseDto;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -37,6 +39,7 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 		body.put("path", request.getServletPath());
 
 		final ObjectMapper mapper = new ObjectMapper();
-		mapper.writeValue(response.getOutputStream(), body);
+		mapper.writeValue(response.getOutputStream(),
+				new ApiResponseDto<Map<String, Object>>("Vous n'etes pas autorisé", body, false));
 	}
 }
