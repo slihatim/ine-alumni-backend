@@ -27,12 +27,13 @@ public class WebSecurityConfig {
 	@Autowired
 	private AuthEntryPointJwt unauthorizedHandler;
 
-  @Autowired private EmailVerificationAuthorizationManager emailVerificationAuthorizationManager;
+	@Autowired
+	private EmailVerificationAuthorizationManager emailVerificationAuthorizationManager;
 
-  @Bean
-  public AuthTokenFilter authenticationJwtTokenFilter() {
-    return new AuthTokenFilter();
-  }
+	@Bean
+	public AuthTokenFilter authenticationJwtTokenFilter() {
+		return new AuthTokenFilter();
+	}
 
 	@Bean
 	public DaoAuthenticationProvider authenticationProvider() {
@@ -54,23 +55,15 @@ public class WebSecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 
-  @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.csrf(AbstractHttpConfigurer::disable)
-        .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-        .sessionManagement(
-            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(
-            auth ->
-                auth.requestMatchers(
-                        "/api/v1/auth/**",
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**",
-                        "/v3/api-docs",
-                        "/swagger-ui.html")
-                    .permitAll()
-                    .anyRequest()
-                    .access(emailVerificationAuthorizationManager));
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.csrf(AbstractHttpConfigurer::disable)
+				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs",
+								"/swagger-ui.html")
+						.permitAll().anyRequest().access(emailVerificationAuthorizationManager));
 
 		http.authenticationProvider(authenticationProvider());
 

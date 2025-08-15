@@ -14,18 +14,17 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/email")
 @RequiredArgsConstructor
 public class EmailVerificationController {
-  private final EmailVerificationService emailVerificationService;
+	private final EmailVerificationService emailVerificationService;
 
-  @PostMapping("/resend-verification")
-  public ResponseEntity<ApiResponseDto<Void>> resendVerification(Principal principal) {
-    emailVerificationService.resendVerificationToken(principal.getName());
-    return ResponseEntity.noContent().build();
-  }
+	@PostMapping("/resend-verification")
+	public ResponseEntity<ApiResponseDto<Void>> resendVerification(Principal principal) {
+		emailVerificationService.resendVerificationToken(principal.getName());
+		return ResponseEntity.noContent().build();
+	}
 
-  @GetMapping("/verify")
-  public ResponseEntity<ApiResponseDto<Void>> verifyEmail(
-      Principal principal, @RequestParam String token) {
-    final User verifiedUser = emailVerificationService.verifyEmail(principal.getName(), token);
-    return ResponseEntity.ok(new ApiResponseDto<>("l'émail a été verifié", null, true));
-  }
+	@GetMapping("/verify")
+	public ResponseEntity<ApiResponseDto<Void>> verifyEmail(Principal principal, @RequestParam String token) {
+		final User verifiedUser = emailVerificationService.verifyEmail(principal.getName(), token);
+		return ResponseEntity.ok(new ApiResponseDto<>("l'émail a été verifié", null, true));
+	}
 }

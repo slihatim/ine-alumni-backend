@@ -16,46 +16,45 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class EmailVerificationService {
-  private final OtpService otpService;
-  private final UserService userService;
-  private final JavaMailSender mailSender;
+	private final OtpService otpService;
+	private final UserService userService;
+	private final JavaMailSender mailSender;
 
-  @Async
-  public void sendVerificationToken(String email) {
-    final String token = otpService.generateAndStoreOtp(email);
+	@Async
+	public void sendVerificationToken(String email) {
+		final String token = otpService.generateAndStoreOtp(email);
 
-    SimpleMailMessage message = new SimpleMailMessage();
-    message.setTo(email);
-    message.setSubject("Ine Alumni Email Verification");
-    message.setFrom("System");
-    message.setText("Verification code: " + token);
+		SimpleMailMessage message = new SimpleMailMessage();
+		message.setTo(email);
+		message.setSubject("Ine Alumni Email Verification");
+		message.setFrom("System");
+		message.setText("Verification code: " + token);
 
-    mailSender.send(message);
-  }
+		mailSender.send(message);
+	}
 
-  public void resendVerificationToken(String email) {
-    User user = userService.findByEmail(email);
-    if (user != null && !user.getIsEmailVerified()) {
-      sendVerificationToken(email);
-    } else {
-      throw new ResponseStatusException(
-          HttpStatus.CONFLICT, "l'utilisateur n'existe pas, ou deja vérifié");
-    }
-  }
+	public void resendVerificationToken(String email) {
+		User user = userService.findByEmail(email);
+		if (user != null && !user.getIsEmailVerified()) {
+			sendVerificationToken(email);
+		} else {
+			throw new ResponseStatusException(HttpStatus.CONFLICT, "l'utilisateur n'existe pas, ou deja vérifié");
+		}
+	}
 
-  @Transactional
-  public User verifyEmail(String email, String otp) {
-    final User user = userService.findByEmail(email);
-    if (user.getIsEmailVerified()) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "l'émail est deja vérifié.");
-    }
+	@Transactional
+	public User verifyEmail(String email, String otp) {
+		final User user = userService.findByEmail(email);
+		if (user.getIsEmailVerified()) {
+			throw new ResponseStatusException(HttpStatus.CONFLICT, "l'émail est deja vérifié.");
+		}
 
-    if (!otpService.isOtpValid(email, otp)) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token est invalide ou expiré");
-    }
-    otpService.deleteOtp(email);
+		if (!otpService.isOtpValid(email, otp)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token est invalide ou expiré");
+		}
+		otpService.deleteOtp(email);
 
-    user.setIsEmailVerified(true);
-    return user;
-  }
+		user.setIsEmailVerified(true);
+		return user;
+	}
 }

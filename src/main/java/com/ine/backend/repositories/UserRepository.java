@@ -10,19 +10,13 @@ import jakarta.validation.constraints.NotBlank;
 
 @Repository
 public interface UserRepository extends JpaRepository<InptUser, Long> {
-  InptUser findByEmail(
-      @Email(message = "L'adresse email n'est pas valide.")
-          @NotBlank(message = "L'adresse email est obligatoire.")
-          String email);
+	InptUser findByEmail(
+			@Email(message = "L'adresse email n'est pas valide.") @NotBlank(message = "L'adresse email est obligatoire.") String email);
 
-  boolean existsByEmail(
-      @Email(message = "L'adresse email n'est pas valide.")
-          @NotBlank(message = "L'adresse email est obligatoire.")
-          String email);
+	boolean existsByEmail(
+			@Email(message = "L'adresse email n'est pas valide.") @NotBlank(message = "L'adresse email est obligatoire.") String email);
 
-  boolean existsByEmailAndIsEmailVerified(
-      @Email(message = "L'adresse email n'est pas valide.")
-          @NotBlank(message = "L'adresse email est obligatoire.")
-          String email,
-      boolean isEmailVerified);
+	boolean existsByEmailAndIsEmailVerified(
+			@Email(message = "L'adresse email n'est pas valide.") @NotBlank(message = "L'adresse email est obligatoire.") String email,
+			boolean isEmailVerified);
 }

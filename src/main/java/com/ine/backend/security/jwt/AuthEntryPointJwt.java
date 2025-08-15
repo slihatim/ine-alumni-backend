@@ -38,9 +38,8 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 		body.put("message", authException.getMessage());
 		body.put("path", request.getServletPath());
 
-    final ObjectMapper mapper = new ObjectMapper();
-    mapper.writeValue(
-        response.getOutputStream(),
-        new ApiResponseDto<Map<String, Object>>("Vous n'etes pas autorisé", body, false));
-  }
+		final ObjectMapper mapper = new ObjectMapper();
+		mapper.writeValue(response.getOutputStream(),
+				new ApiResponseDto<Map<String, Object>>("Vous n'etes pas autorisé", body, false));
+	}
 }

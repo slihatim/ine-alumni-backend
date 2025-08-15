@@ -25,12 +25,10 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponseDto<>(ex.getMessage(), null, false));
 	}
 
-  @ExceptionHandler(value = ResponseStatusException.class)
-  public ResponseEntity<ApiResponseDto<String>> handleResponseStatusException(
-      ResponseStatusException ex) {
-    return ResponseEntity.status(ex.getStatusCode())
-        .body(new ApiResponseDto<>(ex.getMessage(), null, false));
-  }
+	@ExceptionHandler(value = ResponseStatusException.class)
+	public ResponseEntity<ApiResponseDto<String>> handleResponseStatusException(ResponseStatusException ex) {
+		return ResponseEntity.status(ex.getStatusCode()).body(new ApiResponseDto<>(ex.getMessage(), null, false));
+	}
 
 	@ExceptionHandler(value = Exception.class)
 	public ResponseEntity<ApiResponseDto<String>> handleException(Exception ex) {

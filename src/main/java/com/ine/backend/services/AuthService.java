@@ -33,8 +33,7 @@ public class AuthService {
 	public void signUpUser(SignUpRequestDto requestDto) throws UserAlreadyExistsException {
 		if (userService.existsByEmail(requestDto.getEmail())) {
 			throw new UserAlreadyExistsException(
-					"Échec d'inscription : l'email fourni existe déjà. Essayez de vous connecter ou utilisez"
-							+ " un autre email.");
+					"Échec d'inscription : l'email fourni existe déjà. Essayez de vous connecter ou utilisez un autre email.");
 		}
 
 		InptUser user = createUser(requestDto);

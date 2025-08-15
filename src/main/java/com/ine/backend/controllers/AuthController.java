@@ -21,21 +21,21 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/api/v1/auth")
 @AllArgsConstructor
 public class AuthController {
-  private AuthService authService;
-  private EmailVerificationService emailVerificationService;
+	private AuthService authService;
+	private EmailVerificationService emailVerificationService;
 
 	@PostMapping("/signup")
 	public ResponseEntity<ApiResponseDto<String>> registerUser(@RequestBody @Valid SignUpRequestDto requestDto)
 			throws UserAlreadyExistsException {
 
-    authService.signUpUser(requestDto);
+		authService.signUpUser(requestDto);
 
-    // Directly after registering the user, we send the verification email
-    emailVerificationService.sendVerificationToken(requestDto.getEmail());
+		// Directly after registering the user, we send the verification email
+		emailVerificationService.sendVerificationToken(requestDto.getEmail());
 
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body(new ApiResponseDto<>("Le compte utilisateur a été créé avec succès !", null, true));
-  }
+		return ResponseEntity.status(HttpStatus.CREATED)
+				.body(new ApiResponseDto<>("Le compte utilisateur a été créé avec succès !", null, true));
+	}
 
 	@PostMapping("/signin")
 	public ResponseEntity<ApiResponseDto<SignInResponseDto>> signInUser(
