@@ -1,60 +1,66 @@
 package com.ine.backend.entities;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
-@Table(name = "Resource")
+@Table(name = "resources")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @ToString
 public class Resource {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @NotBlank(message = "Title is required")
-    @Column(nullable = false, length = 255)
-    private String title;
+	@NotBlank(message = "Title is required")
+	@Column(nullable = false)
+	private String title;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+	@Column(columnDefinition = "TEXT")
+	private String description;
 
-    @NotNull(message = "IsConfidential is required")
-    @Column(nullable = false)
-    private Boolean isConfidential;
+	@NotNull(message = "IsConfidential is required")
+	@Column(nullable = false)
+	private Boolean isConfidential;
 
-    @NotBlank(message = "Category is required")
-    @Column(nullable = false, length = 100)
-    private String category; // formations, podcasts, documents, videos, etc.
+	@NotNull(message = "Category is required")
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private Category category; // formations, podcasts, documents, videos, etc.
 
-    @NotBlank(message = "Link is required")
-    @Column(nullable = false)
-    private String link;
+	@NotBlank(message = "Link is required")
+	@Column(nullable = false)
+	private String link;
 
-    @NotBlank(message = "Author is required")
-    @Column(nullable = false, length = 255)
-    private String author;
+	@NotNull(message = "Author is required")
+	private String author;
 
-    // The field can be true in case we want to update a certain row
-    @NotNull(message = "Date is required")
-    @Column(nullable = true)
-    private LocalDateTime createdDate;
+	// The field can be true in case we want to update a certain row
+	@CreationTimestamp
+	@Column(updatable = false)
+	private LocalDateTime createdDate;
 
-    @NotBlank(message = "Domain is required")
-    @Column(nullable = false, length = 100)
-    private String domain;
+	@NotNull(message = "Domain is required")
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private Domain domain;
 
-//    WE MIGHT THINK LATER ABOUT ADDING THIS TWO FIELDS FOR EVERY ENTITY TO ENSURE PROPER LOGGING
-//    @Column(name = "created_at")
-//    private LocalDateTime createdAt;
-//
-//    @Column(name = "updated_at")
-//    private LocalDateTime updatedAt;
+	// WE MIGHT THINK LATER ABOUT ADDING THIS TWO FIELDS FOR EVERY ENTITY TO ENSURE
+	// PROPER LOGGING
+	// @Column(name = "created_at")
+	// private LocalDateTime createdAt;
+	//
+	// @Column(name = "updated_at")
+	// private LocalDateTime updatedAt;
 }
