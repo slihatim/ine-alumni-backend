@@ -56,7 +56,7 @@ public class ResourceController {
 			if (resources.isEmpty()) {
 				log.info("No resources found in database - returning empty result");
 				return new ResponseEntity<>(ApiResponseDto.<List<Resource>>builder().message("No resources")
-						.response(resources).isSuccess(true).build(), HttpStatus.NO_CONTENT);
+						.response(resources).isSuccess(true).build(), HttpStatus.OK);
 			}
 			log.info("Successfully retrieved {} resources", resources.size());
 			return new ResponseEntity<>(
@@ -129,7 +129,7 @@ public class ResourceController {
 			log.info("Successfully deleted resource with ID: {}", id);
 			return new ResponseEntity<>(
 					ApiResponseDto.<Void>builder().message("Deleted").response(null).isSuccess(true).build(),
-					HttpStatus.NO_CONTENT);
+					HttpStatus.OK);
 		} catch (RuntimeException e) {
 			log.error("Resource with ID: {} not found for deletion. Error: {}", id, e.getMessage(), e);
 			return new ResponseEntity<>(
@@ -156,7 +156,7 @@ public class ResourceController {
 			if (resources.isEmpty()) {
 				log.info("No resources found for category: {} - returning empty result", category);
 				return new ResponseEntity<>(ApiResponseDto.<List<Resource>>builder().message("No resources")
-						.response(resources).isSuccess(true).build(), HttpStatus.NO_CONTENT);
+						.response(resources).isSuccess(true).build(), HttpStatus.OK);
 			}
 			log.info("Successfully retrieved {} resources for category: {}", resources.size(), category);
 			return new ResponseEntity<>(
@@ -184,7 +184,7 @@ public class ResourceController {
 			if (resources.isEmpty()) {
 				log.info("No resources found for domain: {} - returning empty result", domain);
 				return new ResponseEntity<>(ApiResponseDto.<List<Resource>>builder().message("No resources")
-						.response(resources).isSuccess(true).build(), HttpStatus.NO_CONTENT);
+						.response(resources).isSuccess(true).build(), HttpStatus.OK);
 			}
 			log.info("Successfully retrieved {} resources for domain: {}", resources.size(), domain);
 			return new ResponseEntity<>(
@@ -228,7 +228,7 @@ public class ResourceController {
 			if (resources.isEmpty()) {
 				log.info("No resources found matching filter criteria - category: {}, domain: {}", category, domain);
 				return new ResponseEntity<>(ApiResponseDto.<List<Resource>>builder().message("No resources")
-						.response(resources).isSuccess(true).build(), HttpStatus.NO_CONTENT);
+						.response(resources).isSuccess(true).build(), HttpStatus.OK);
 			}
 			log.info("Successfully filtered {} resources with category: {} and domain: {}", resources.size(), category,
 					domain);
@@ -258,7 +258,7 @@ public class ResourceController {
 			if (resources.isEmpty()) {
 				log.info("No resources found matching search keyword: {} - returning empty result", keyword);
 				return new ResponseEntity<>(ApiResponseDto.<List<Resource>>builder().message("No resources")
-						.response(resources).isSuccess(true).build(), HttpStatus.NO_CONTENT);
+						.response(resources).isSuccess(true).build(), HttpStatus.OK);
 			}
 			log.info("Successfully found {} resources matching search keyword: {}", resources.size(), keyword);
 			return new ResponseEntity<>(
