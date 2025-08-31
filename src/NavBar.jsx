@@ -2,12 +2,9 @@ import React from 'react'
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  NavigationMenuViewport,
 } from "@/components/ui/navigation-menu"
 import {
   DropdownMenu,
@@ -82,7 +79,7 @@ const NavBar = () => {
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <Link to="/ressources" className="text-sm font-medium hover:underline">
+                <Link to="/ressources/textuelles" className="text-sm font-medium hover:underline">
                   Ressources
                 </Link>
               </NavigationMenuItem>
