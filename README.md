@@ -47,3 +47,37 @@ and then run the previous command.
     ```bash
     ./mvnw spotless:apply
     ```
+
+## Environment variables and procedure
+
+Before running the backend locally you should create a local `.env` file from the provided template and fill in secrets (database password, JWT secret, etc.). The project provides a `.env-template` with examples.
+
+1. Copy the template to a local `.env` file:
+
+```bash
+cp .env-template .env
+```
+
+2. Edit `.env` and set the real values for:
+- `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`
+- `APP_JWT_SECRET` and `APP_JWT_EXPIRATION_MS` (use a strong secret for production)
+- `SERVER_PORT` (optional)
+
+3. Start the database stack and create the `ine` database (if using Docker):
+
+```bash
+docker-compose up -d
+docker exec -it postgres bash
+psql -U hatim
+CREATE DATABASE ine;
+```
+
+4. Run the application locally (from the repo root):
+
+```bash
+./mvnw spring-boot:run
+```
+
+Notes:
+- `.env` is listed in `.gitignore` to avoid committing secrets — keep it private.
+- If your environment does not automatically load `.env` into environment variables, use a tool like `direnv`, `env-cmd`, or configure your IDE to load env files.

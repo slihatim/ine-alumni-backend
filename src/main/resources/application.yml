@@ -1,18 +1,24 @@
 spring:
+  # Application name (can be overridden with SPRING_APPLICATION_NAME)
   application:
-    name: ine-alumni-backend
+    name: ${SPRING_APPLICATION_NAME}
+
+  # Datasource configuration: prefer environment variables for secrets and connection details
   datasource:
-    url: jdbc:postgresql://localhost:5432/ine
-    username: hatim
-    password: hatim
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
       naming:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  # Flyway config: can use dedicated FLYWAY env vars or fall back to datasource creds
   flyway:
     baseline-on-migrate: true
     enabled: false
@@ -21,9 +27,29 @@ spring:
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
 
+  mail:
+    # Mail settings - prefer environment variables for credentials
+    host: ${SPRING_MAIL_HOST:smtp.gmail.com}
+    port: ${SPRING_MAIL_PORT:587}
+    username: ${SPRING_MAIL_USERNAME}
+    password: ${SPRING_MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: ${SPRING_MAIL_SMTP_AUTH:true}
+          starttls:
+            enable: ${SPRING_MAIL_SMTP_STARTTLS_ENABLE:true}
+
 app:
-  jwtSecret: "Zua5SEKuIyJf/ztcXbv2cxuQnmUJLM1Jg/FWABceKyc="
-  jwtExpirationMs: 86400000
+  jwtSecret: ${APP_JWT_SECRET}
+  jwtExpirationMs: ${APP_JWT_EXPIRATION_MS}
+
+# JWT configuration
+# The application reads JWT values from environment variables first:
+#   APP_JWT_SECRET and APP_JWT_EXPIRATION_MS
+# If those are not present, legacy 'app.jwtSecret' and 'app.jwtExpirationMs'
+# are still used as fallbacks in code for backward compatibility.
 
 server:
-  port: 8080
+  # Server port is configurable via SERVER_PORT
+  port: ${SERVER_PORT:8080}
