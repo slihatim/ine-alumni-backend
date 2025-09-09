@@ -1,6 +1,7 @@
 package com.ine.backend.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ine.backend.entities.OfferType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -39,9 +40,14 @@ public class Offer {
     @Column(nullable = false)
     private String location;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "offer_type_id", nullable = false)
+    // FIXED: Changed from entity relationship to enum for type safety as requested in PR
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
     private OfferType type;
+
+    // ADDED: Custom type field for when type is OTHER, replacing the OfferType entity's customType
+    @Column(length = 100)
+    private String customType;
 
     @Column(length = 2048)
     private String description;
@@ -62,5 +68,3 @@ public class Offer {
     @JsonIgnore
     private List<OfferApplication> applications = new ArrayList<>();
 }
-
-
