@@ -1,45 +1,59 @@
 package com.ine.backend.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import lombok.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
-@Entity
-@Table(name = "offer_types", indexes = {
-        @Index(name = "idx_offer_type_name", columnList = "name"),
-        @Index(name = "idx_offer_type_name_custom", columnList = "name, custom_type")
-})
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class OfferType {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+/**
+ * Enum representing different types of job offers.
+ * Replaces the previous OfferType entity for better type safety.
+ * 
+ * @author TahaBENMALEK
+ * @version 1.0
+ */
+// FIXED: Moved enum to entities package instead of creating new enums package
+public enum OfferType {
+    JOB("job"),
+    INTERNSHIP("internship"), 
+    ALTERNANCE("alternance"),
+    BENEVOLAT("benevolat"),
+    OTHER("other");
+    
+    private final String value;
+    
+    OfferType(String value) {
+        this.value = value;
+    }
+    
+    public String getValue() {
+        return value;
+    }
+    
     /**
-     * Allowed values (lowercase suggested): job, internship, alternance, benevolat, other
+     * Converts string value to OfferType enum.
+     * Case-insensitive conversion.
+     * 
+     * @param value string value to convert
+     * @return OfferType enum
+     * @throws IllegalArgumentException if value doesn't match any enum
      */
-    @Column(name = "name", nullable = false, length = 50)
-    @NotBlank
-    private String name;
-
+    public static OfferType fromString(String value) {
+        if (value == null) {
+            throw new IllegalArgumentException("Offer type cannot be null");
+        }
+        
+        for (OfferType type : OfferType.values()) {
+            if (type.value.equalsIgnoreCase(value)) {
+                return type;
+            }
+        }
+        
+        throw new IllegalArgumentException("Invalid offer type: " + value + 
+            ". Valid types are: job, internship, alternance, benevolat, other");
+    }
+    
     /**
-     * Optional label used only when name == "other"
+     * Checks if the offer type requires a custom type specification.
+     * 
+     * @return true if this is OTHER type, false otherwise
      */
-    @Column(name = "custom_type")
-    private String customType;
-
-    @OneToMany(mappedBy = "type", fetch = FetchType.LAZY)
-    @Builder.Default
-    @JsonIgnore
-    private List<Offer> offers = new ArrayList<>();
+    public boolean requiresCustomType() {
+        return this == OTHER;
+    }
 }
-
-

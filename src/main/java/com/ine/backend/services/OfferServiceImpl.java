@@ -9,13 +9,11 @@ import com.ine.backend.entities.OfferType;
 import com.ine.backend.exceptions.OfferNotFoundException;
 import com.ine.backend.repositories.OfferApplicationRepository;
 import com.ine.backend.repositories.OfferRepository;
-import com.ine.backend.repositories.OfferTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,8 +21,8 @@ import java.util.stream.Collectors;
 public class OfferServiceImpl implements OfferService {
 
     private final OfferRepository offerRepository;
-    private final OfferTypeRepository offerTypeRepository;
     private final OfferApplicationRepository offerApplicationRepository;
+    // REMOVED: OfferTypeRepository no longer needed since we're using enum
 
     @Override
     @Transactional(readOnly = true)
@@ -36,15 +34,23 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public OfferResponseDto getOfferById(Long id) {
+        Offer offer = offerRepository.findById(id)
+                .orElseThrow(() -> new OfferNotFoundException(id));
+        return mapToResponse(offer);
+    }
+
+    @Override
     @Transactional
     public OfferResponseDto createOffer(OfferRequestDto requestDto) {
-        OfferType offerType = resolveOfferType(requestDto.getType(), requestDto.getCustomType());
-
+        // FIXED: Convert string to enum using helper method
         Offer offer = Offer.builder()
                 .title(requestDto.getTitle())
                 .company(requestDto.getCompany())
                 .location(requestDto.getLocation())
-                .type(offerType)
+                .type(requestDto.getOfferTypeEnum()) // Use helper method to convert string to enum
+                .customType(requestDto.getCustomType())
                 .description(requestDto.getDescription())
                 .duration(requestDto.getDuration())
                 .link(requestDto.getLink())
@@ -52,6 +58,35 @@ public class OfferServiceImpl implements OfferService {
 
         Offer saved = offerRepository.save(offer);
         return mapToResponse(saved);
+    }
+
+    @Override
+    @Transactional
+    public OfferResponseDto updateOffer(Long id, OfferRequestDto requestDto) {
+        Offer offer = offerRepository.findById(id)
+                .orElseThrow(() -> new OfferNotFoundException(id));
+
+        // Update fields with proper enum conversion
+        offer.setTitle(requestDto.getTitle());
+        offer.setCompany(requestDto.getCompany());
+        offer.setLocation(requestDto.getLocation());
+        offer.setType(requestDto.getOfferTypeEnum()); // Use helper method
+        offer.setCustomType(requestDto.getCustomType());
+        offer.setDescription(requestDto.getDescription());
+        offer.setDuration(requestDto.getDuration());
+        offer.setLink(requestDto.getLink());
+
+        Offer updated = offerRepository.save(offer);
+        return mapToResponse(updated);
+    }
+
+    @Override
+    @Transactional
+    public void deleteOffer(Long id) {
+        if (!offerRepository.existsById(id)) {
+            throw new OfferNotFoundException(id);
+        }
+        offerRepository.deleteById(id);
     }
 
     @Override
@@ -66,7 +101,7 @@ public class OfferServiceImpl implements OfferService {
 
         boolean alreadyApplied = offerApplicationRepository.existsByOfferIdAndApplicantId(offerId, applicant.getId());
         if (alreadyApplied) {
-            return; // idempotent
+            return; // FIXED: Keep idempotent behavior as in original code, don't throw exception
         }
 
         OfferApplication application = OfferApplication.builder()
@@ -79,59 +114,25 @@ public class OfferServiceImpl implements OfferService {
         offerApplicationRepository.save(application);
     }
 
-    private OfferType resolveOfferType(String type, String customType) {
-        String normalized = normalizeType(type);
-
-        if ("other".equalsIgnoreCase(normalized)) {
-            String custom = customType == null ? null : customType.trim();
-            return offerTypeRepository.findByNameIgnoreCaseAndCustomTypeIgnoreCase(normalized, custom)
-                    .orElseGet(() -> offerTypeRepository.save(OfferType.builder()
-                            .name(normalized)
-                            .customType(custom)
-                            .build()));
-        }
-
-        return offerTypeRepository.findByNameIgnoreCaseAndCustomTypeIsNull(normalized)
-                .orElseGet(() -> offerTypeRepository.save(OfferType.builder()
-                        .name(normalized)
-                        .customType(null)
-                        .build()));
+    // ADDED: Method to get offers by type as requested in PR comments
+    @Override
+    @Transactional(readOnly = true)
+    public List<OfferResponseDto> getOffersByType(OfferType type) {
+        return offerRepository.findByType(type)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
-    private String normalizeType(String type) {
-        if (type == null) return "other";
-        String t = type.trim().toLowerCase(Locale.ROOT);
-        switch (t) {
-            case "stage":
-                return "internship";
-            case "emploi":
-                return "job";
-            case "alternance":
-                return "alternance";
-            case "benevolat":
-            case "bénévolat":
-                return "benevolat";
-            case "autre":
-            case "other":
-                return "other";
-            case "job":
-            case "internship":
-                return t;
-            default:
-                return "other";
-        }
-    }
-
+    // SIMPLIFIED: Removed normalizeType and resolveOfferType methods as they're no longer needed with enum
     private OfferResponseDto mapToResponse(Offer offer) {
-        String name = offer.getType() != null ? offer.getType().getName() : null;
-        String custom = offer.getType() != null ? offer.getType().getCustomType() : null;
         return OfferResponseDto.builder()
                 .id(offer.getId())
                 .title(offer.getTitle())
                 .company(offer.getCompany())
                 .location(offer.getLocation())
-                .type(name)
-                .customType(custom)
+                .type(offer.getType().getValue()) // Convert enum to string for response
+                .customType(offer.getCustomType())
                 .duration(offer.getDuration())
                 .description(offer.getDescription())
                 .link(offer.getLink())
@@ -139,5 +140,3 @@ public class OfferServiceImpl implements OfferService {
                 .build();
     }
 }
-
-
