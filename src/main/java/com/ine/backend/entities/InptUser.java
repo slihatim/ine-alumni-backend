@@ -42,6 +42,7 @@ public class InptUser extends User {
 	private LocalDate birthDate;
 
 	@Enumerated(value = EnumType.STRING)
+	@NotNull(message = "Le sexe est obligatoire.")
 	private Gender gender;
 
 	private String country;

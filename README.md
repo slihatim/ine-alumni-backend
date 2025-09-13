@@ -47,3 +47,7 @@ and then run the previous command.
     ```bash
     ./mvnw spotless:apply
     ```
+
+# API Documentation
+- To access Swagger API documentation, head to:
+    ```http://localhost:8080/swagger-ui.html```

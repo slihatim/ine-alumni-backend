@@ -48,7 +48,10 @@ public class User {
 	// for LAUREAT : Admin Approval verification
 	// for Third Party Users : other logic maybe
 	@Builder.Default
-	private Boolean isAccountVerified = false;
+	private Boolean isAccountVerified = true;
+
+	// Personal email verification
+	private Boolean isEmailVerified = false;
 
 	// for OAuth (Will be discussed in upcomming versions)
 	private String linkedinId;

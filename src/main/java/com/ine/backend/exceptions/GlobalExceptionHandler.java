@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.ine.backend.dto.ApiResponseDto;
 
@@ -22,6 +23,11 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(value = UserAlreadyExistsException.class)
 	public ResponseEntity<ApiResponseDto<String>> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponseDto<>(ex.getMessage(), null, false));
+	}
+
+	@ExceptionHandler(value = ResponseStatusException.class)
+	public ResponseEntity<ApiResponseDto<String>> handleResponseStatusException(ResponseStatusException ex) {
+		return ResponseEntity.status(ex.getStatusCode()).body(new ApiResponseDto<>(ex.getMessage(), null, false));
 	}
 
 	@ExceptionHandler(value = Exception.class)
