@@ -46,4 +46,27 @@ and then run the previous command.
 2. To format your code:
     ```bash
     ./mvnw spotless:apply
-    ```# Test comment
+    ```
+
+# Pre-commit Setup
+Pre-commit hooks help maintain code quality by running checks before each commit.
+
+1. Install pre-commit:
+    ```bash
+    pip install pre-commit
+    ```
+
+2. Install the hooks:
+    ```bash
+    pre-commit install
+    ```
+
+The configured hooks will:
+- Check for trailing whitespace and fix file endings
+- Validate YAML files
+- Prevent large files (>1MB) from being committed
+- Check for debug logs in Java code
+- Look for sensitive information in config files
+- Automatically format code using Spotless
+- Ensure the code compiles successfully
+- Run tests before pushing (pre-push hook)
