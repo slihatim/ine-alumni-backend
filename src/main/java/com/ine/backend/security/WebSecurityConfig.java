@@ -27,6 +27,9 @@ public class WebSecurityConfig {
 	@Autowired
 	private AuthEntryPointJwt unauthorizedHandler;
 
+	@Autowired
+	private EmailVerificationAuthorizationManager emailVerificationAuthorizationManager;
+
 	@Bean
 	public AuthTokenFilter authenticationJwtTokenFilter() {
 		return new AuthTokenFilter();
@@ -57,8 +60,10 @@ public class WebSecurityConfig {
 		http.csrf(AbstractHttpConfigurer::disable)
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests(
-						auth -> auth.requestMatchers("/api/v1/auth/**").permitAll().anyRequest().authenticated());
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs",
+								"/swagger-ui.html")
+						.permitAll().anyRequest().access(emailVerificationAuthorizationManager));
 
 		http.authenticationProvider(authenticationProvider());
 

@@ -63,22 +63,6 @@ cp .env-template .env
 - `APP_JWT_SECRET` and `APP_JWT_EXPIRATION_MS` (use a strong secret for production)
 - `SERVER_PORT` (optional)
 
-3. Start the database stack and create the `ine` database (if using Docker):
-
-```bash
-docker-compose up -d
-docker exec -it postgres bash
-psql -U hatim
-CREATE DATABASE ine;
-```
-
-4. Run the application locally (from the repo root):
-
-```bash
-./mvnw spring-boot:run
-```
-
-
 # Formatting
 1. To check if your code is formatted run:
     ```bash
