@@ -10,7 +10,7 @@ Follow the steps below to setup and run the project on your local machine.
     ```bash
     git clone https://github.com/slihatim/ine-alumni-backend.git
     ```
-2. Go inside the directory with:  
+2. Go inside the directory with:
     ```bash
     cd ine-alumni-backend
     ```

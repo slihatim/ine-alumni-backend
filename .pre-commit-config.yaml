@@ -1,0 +1,44 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+    -   id: check-yaml
+    -   id: check-added-large-files
+        args: ['--maxkb=1000']
+    -   id: check-merge-conflict
+
+-   repo: local
+    hooks:
+    -   id: debug-check-java
+        name: Check for debug logs & prints
+        language: pygrep
+        entry: '(System\.out\.println|e\.printStackTrace\(\)|logger\.debug)'
+        types: [java]
+
+    -   id: sensitive-check
+        name: Check for sensitive information
+        language: pygrep
+        entry: '(password|secret|key|token).*='
+        types: [file]
+        files: 'application.*\.(properties|yml)$'
+
+    -   id: maven-spotless
+        name: Maven Spotless
+        language: system
+        entry: bash -c "./mvnw spotless:apply"
+        pass_filenames: false
+
+    -   id: maven-compile
+        name: Maven Compile
+        language: system
+        entry: bash -c "./mvnw compile"
+        pass_filenames: false
+
+    -   id: maven-test
+        name: Run Maven Tests
+        language: system
+        entry: bash -c "./mvnw spotless:apply test"
+        pass_filenames: false
+        stages: [pre-push]
