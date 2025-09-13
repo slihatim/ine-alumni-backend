@@ -1,6 +1,5 @@
 package com.ine.backend.services;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -174,7 +173,7 @@ public class ResourceServiceImpl implements ResourceService {
 
 	/**
 	 * Validate resource data
-	 * 
+	 *
 	 * @param resource
 	 *            the resource to validate
 	 */
@@ -214,6 +213,6 @@ public class ResourceServiceImpl implements ResourceService {
 			throw new IllegalArgumentException("Resource domain cannot be null or empty");
 		}
 
-        // created_date field will be automatically assigned a value
+		// created_date field will be automatically assigned a value
 	}
 }

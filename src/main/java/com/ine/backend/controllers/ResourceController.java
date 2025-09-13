@@ -308,5 +308,5 @@ public class ResourceController {
 	}
 
 	// Get resources by author TBD
-	
+
 }
