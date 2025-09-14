@@ -13,6 +13,8 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
 	// FIXED: Import from entities package, removed duplicate content
 	List<Offer> findByType(OfferType type);
 
-	// Method to find offers by type and custom type for OTHER category
-	List<Offer> findByTypeAndCustomTypeIgnoreCase(OfferType type, String customType);
+	// New finder methods for filters
+	List<Offer> findByCompanyIgnoreCase(String company);
+
+	List<Offer> findByLocationIgnoreCase(String location);
 }

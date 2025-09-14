@@ -17,4 +17,12 @@ public interface OfferService {
 
 	// ADDED: Method to retrieve offers by type as suggested in PR comments
 	List<OfferResponseDto> getOffersByType(OfferType type);
+
+	// ADDED: Methods to retrieve offers by company and location
+	List<OfferResponseDto> getOffersByCompany(String company);
+
+	List<OfferResponseDto> getOffersByLocation(String location);
+
+	// List applicants for a given offer
+	List<Long> getOfferAppliers(Long offerId);
 }

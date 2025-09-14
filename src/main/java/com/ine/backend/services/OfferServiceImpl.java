@@ -1,6 +1,7 @@
 package com.ine.backend.services;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -99,11 +100,35 @@ public class OfferServiceImpl implements OfferService {
 		offerApplicationRepository.save(application);
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public List<Long> getOfferAppliers(Long offerId) {
+		// Ensure offer exists
+		offerRepository.findById(offerId).orElseThrow(() -> new OfferNotFoundException(offerId));
+		return offerApplicationRepository.findByOfferId(offerId).stream()
+				.map(app -> app.getApplicant() != null ? app.getApplicant().getId() : null).filter(Objects::nonNull)
+				.collect(Collectors.toList());
+	}
+
 	// ADDED: Method to get offers by type as requested in PR comments
 	@Override
 	@Transactional(readOnly = true)
 	public List<OfferResponseDto> getOffersByType(OfferType type) {
 		return offerRepository.findByType(type).stream().map(this::mapToResponse).collect(Collectors.toList());
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<OfferResponseDto> getOffersByCompany(String company) {
+		return offerRepository.findByCompanyIgnoreCase(company).stream().map(this::mapToResponse)
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<OfferResponseDto> getOffersByLocation(String location) {
+		return offerRepository.findByLocationIgnoreCase(location).stream().map(this::mapToResponse)
+				.collect(Collectors.toList());
 	}
 
 	// SIMPLIFIED: Removed normalizeType and resolveOfferType methods as they're no

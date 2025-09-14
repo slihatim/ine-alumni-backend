@@ -12,6 +12,7 @@ import com.ine.backend.dto.ApiResponseDto;
 import com.ine.backend.dto.OfferRequestDto;
 import com.ine.backend.dto.OfferResponseDto;
 import com.ine.backend.entities.InptUser;
+import com.ine.backend.entities.OfferType;
 import com.ine.backend.services.OfferService;
 import com.ine.backend.services.UserService;
 
@@ -70,6 +71,114 @@ public class OfferController {
 		}
 	}
 
+	// Get single offer by id
+	@GetMapping("/{id}")
+	public ResponseEntity<ApiResponseDto<OfferResponseDto>> getOffer(@PathVariable("id") Long id) {
+		try {
+			OfferResponseDto dto = offerService.getOfferById(id);
+			return new ResponseEntity<>(
+					ApiResponseDto.<OfferResponseDto>builder().message("OK").response(dto).isSuccess(true).build(),
+					HttpStatus.OK);
+		} catch (RuntimeException e) {
+			log.warn("Offer not found: {}", e.getMessage(), e);
+			return new ResponseEntity<>(ApiResponseDto.<OfferResponseDto>builder().message(e.getMessage())
+					.response(null).isSuccess(false).build(), HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			log.error("Failed to get offer {}. Error: {}", id, e.getMessage(), e);
+			return new ResponseEntity<>(ApiResponseDto.<OfferResponseDto>builder().message(e.getMessage())
+					.response(null).isSuccess(false).build(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	// Update an offer
+	@PutMapping("/{id}")
+	public ResponseEntity<ApiResponseDto<OfferResponseDto>> updateOffer(@PathVariable("id") Long id,
+			@RequestBody @Valid OfferRequestDto requestDto) {
+		try {
+			OfferResponseDto updated = offerService.updateOffer(id, requestDto);
+			return new ResponseEntity<>(ApiResponseDto.<OfferResponseDto>builder().message("Offer updated")
+					.response(updated).isSuccess(true).build(), HttpStatus.OK);
+		} catch (RuntimeException e) {
+			log.warn("Business error while updating offer {}. Error: {}", id, e.getMessage(), e);
+			return new ResponseEntity<>(ApiResponseDto.<OfferResponseDto>builder().message(e.getMessage())
+					.response(null).isSuccess(false).build(), HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			log.error("Failed to update offer {}. Error: {}", id, e.getMessage(), e);
+			return new ResponseEntity<>(ApiResponseDto.<OfferResponseDto>builder().message(e.getMessage())
+					.response(null).isSuccess(false).build(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	// Delete an offer
+	@DeleteMapping("/{id}")
+	public ResponseEntity<ApiResponseDto<Void>> deleteOffer(@PathVariable("id") Long id) {
+		try {
+			offerService.deleteOffer(id);
+			return new ResponseEntity<>(
+					ApiResponseDto.<Void>builder().message("Offer deleted").response(null).isSuccess(true).build(),
+					HttpStatus.NO_CONTENT);
+		} catch (RuntimeException e) {
+			log.warn("Offer delete error for {}: {}", id, e.getMessage(), e);
+			return new ResponseEntity<>(
+					ApiResponseDto.<Void>builder().message(e.getMessage()).response(null).isSuccess(false).build(),
+					HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			log.error("Failed to delete offer {}. Error: {}", id, e.getMessage(), e);
+			return new ResponseEntity<>(
+					ApiResponseDto.<Void>builder().message(e.getMessage()).response(null).isSuccess(false).build(),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	// Get offers by company
+	@GetMapping("/company/{company}")
+	public ResponseEntity<ApiResponseDto<List<OfferResponseDto>>> getByCompany(
+			@PathVariable("company") String company) {
+		try {
+			List<OfferResponseDto> offers = offerService.getOffersByCompany(company);
+			return new ResponseEntity<>(ApiResponseDto.<List<OfferResponseDto>>builder().message("OK").response(offers)
+					.isSuccess(true).build(), HttpStatus.OK);
+		} catch (Exception e) {
+			log.error("Failed to get offers by company {}. Error: {}", company, e.getMessage(), e);
+			return new ResponseEntity<>(ApiResponseDto.<List<OfferResponseDto>>builder().message(e.getMessage())
+					.response(null).isSuccess(false).build(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	// Get offers by location
+	@GetMapping("/location/{location}")
+	public ResponseEntity<ApiResponseDto<List<OfferResponseDto>>> getByLocation(
+			@PathVariable("location") String location) {
+		try {
+			List<OfferResponseDto> offers = offerService.getOffersByLocation(location);
+			return new ResponseEntity<>(ApiResponseDto.<List<OfferResponseDto>>builder().message("OK").response(offers)
+					.isSuccess(true).build(), HttpStatus.OK);
+		} catch (Exception e) {
+			log.error("Failed to get offers by location {}. Error: {}", location, e.getMessage(), e);
+			return new ResponseEntity<>(ApiResponseDto.<List<OfferResponseDto>>builder().message(e.getMessage())
+					.response(null).isSuccess(false).build(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	// Get offers by type (path variable as string, convert to enum)
+	@GetMapping("/type/{type}")
+	public ResponseEntity<ApiResponseDto<List<OfferResponseDto>>> getByType(@PathVariable("type") String type) {
+		try {
+			OfferType offerType = OfferType.fromString(type);
+			List<OfferResponseDto> offers = offerService.getOffersByType(offerType);
+			return new ResponseEntity<>(ApiResponseDto.<List<OfferResponseDto>>builder().message("OK").response(offers)
+					.isSuccess(true).build(), HttpStatus.OK);
+		} catch (IllegalArgumentException e) {
+			log.warn("Invalid offer type: {}", type, e);
+			return new ResponseEntity<>(ApiResponseDto.<List<OfferResponseDto>>builder().message(e.getMessage())
+					.response(null).isSuccess(false).build(), HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			log.error("Failed to get offers by type {}. Error: {}", type, e.getMessage(), e);
+			return new ResponseEntity<>(ApiResponseDto.<List<OfferResponseDto>>builder().message(e.getMessage())
+					.response(null).isSuccess(false).build(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 	// Apply to an offer
 	@PostMapping("/{id}/apply")
 	public ResponseEntity<ApiResponseDto<Void>> applyToOffer(@PathVariable("id") Long offerId,
@@ -97,6 +206,25 @@ public class OfferController {
 			return new ResponseEntity<>(
 					ApiResponseDto.<Void>builder().message(e.getMessage()).response(null).isSuccess(false).build(),
 					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	// Get appliers (applicant IDs) for an offer
+	@GetMapping("/{id}/appliers")
+	public ResponseEntity<ApiResponseDto<List<Long>>> getOfferAppliers(@PathVariable("id") Long offerId) {
+		try {
+			List<Long> appliers = offerService.getOfferAppliers(offerId);
+			return new ResponseEntity<>(
+					ApiResponseDto.<List<Long>>builder().message("OK").response(appliers).isSuccess(true).build(),
+					HttpStatus.OK);
+		} catch (RuntimeException e) {
+			log.warn("Offer not found when fetching appliers for {}: {}", offerId, e.getMessage(), e);
+			return new ResponseEntity<>(ApiResponseDto.<List<Long>>builder().message(e.getMessage()).response(null)
+					.isSuccess(false).build(), HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			log.error("Failed to fetch appliers for offer {}. Error: {}", offerId, e.getMessage(), e);
+			return new ResponseEntity<>(ApiResponseDto.<List<Long>>builder().message(e.getMessage()).response(null)
+					.isSuccess(false).build(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
