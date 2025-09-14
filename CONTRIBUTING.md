@@ -1,7 +1,7 @@
 # How to contribute to the repo?
 Ensure before all that an `issue` is assigned to you. (issue = a task). If not, create one for yourself.
 
-1. Clone the repo.  
+1. Clone the repo.
 2. Make sure your are on branch `main`, then add a new branch for your feature and checkout to it (See Branch naming convention below):
     ```bash
     git checkout -b <issue-number>-branch-name
@@ -20,7 +20,7 @@ Ensure before all that an `issue` is assigned to you. (issue = a task). If not, 
 <issue-number>-branch-name
 ```
 
-**Example:** 
+**Example:**
    ```
    12-implement-authorization-logic
    ```
