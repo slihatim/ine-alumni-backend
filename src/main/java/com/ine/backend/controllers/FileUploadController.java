@@ -13,32 +13,65 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ine.backend.dto.ApiResponseDto;
+
 @RestController
-@RequestMapping("/api")
-@CrossOrigin(origins = "*")
+@RequestMapping("/api/v1/files")
+@CrossOrigin("*")
 public class FileUploadController {
 
 	private final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/";
 
 	@PostMapping("/upload")
-	public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+	// @PreAuthorize("hasAuthority('resource:create')")
+	public ResponseEntity<ApiResponseDto<String>> uploadFile(@RequestParam("file") MultipartFile file) {
 		try {
+			// Create upload directory if it doesn't exist
 			File uploadDir = new File(UPLOAD_DIR);
 			if (!uploadDir.exists()) {
 				uploadDir.mkdirs();
 			}
 
-			String filename = StringUtils.cleanPath(file.getOriginalFilename());
+			// Clean and validate filename - handle null case
+			String originalFilename = file.getOriginalFilename();
+			if (originalFilename == null || originalFilename.trim().isEmpty()) {
+				ApiResponseDto<String> response = ApiResponseDto.<String>builder()
+						.message("Invalid filename: filename cannot be null or empty").response(null).isSuccess(false)
+						.build();
+				return ResponseEntity.badRequest().body(response);
+			}
+
+			String filename = StringUtils.cleanPath(originalFilename);
+			if (filename.contains("..")) {
+				ApiResponseDto<String> response = ApiResponseDto.<String>builder()
+						.message("Invalid filename: path traversal attempt detected").response(null).isSuccess(false)
+						.build();
+				return ResponseEntity.badRequest().body(response);
+			}
+
+			// Validate file type (optional security measure)
+			if (file.isEmpty()) {
+				ApiResponseDto<String> response = ApiResponseDto.<String>builder().message("File cannot be empty")
+						.response(null).isSuccess(false).build();
+				return ResponseEntity.badRequest().body(response);
+			}
+
+			// Save file
 			Path filePath = Paths.get(UPLOAD_DIR, filename);
 			Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
 			String fileUrl = "/uploads/" + filename;
 
-			return ResponseEntity.ok(fileUrl);
+			ApiResponseDto<String> response = ApiResponseDto.<String>builder().message("File uploaded successfully")
+					.response(fileUrl).isSuccess(true).build();
+
+			return ResponseEntity.ok(response);
 
 		} catch (IOException e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'upload");
+			ApiResponseDto<String> response = ApiResponseDto.<String>builder()
+					.message("Error occurred during file upload: " + e.getMessage()).response(null).isSuccess(false)
+					.build();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 		}
 	}
 }
