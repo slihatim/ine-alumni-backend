@@ -2,9 +2,9 @@ spring:
   application:
     name: ine-alumni-backend
   datasource:
-    url: jdbc:postgresql://localhost:5432/ine
-    username: hatim
-    password: hatim
+    url: jdbc:postgresql://localhost:5435/evenementdb
+    username: postgres
+    password: 18092021
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
