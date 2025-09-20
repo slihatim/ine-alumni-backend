@@ -9,20 +9,18 @@ repos:
         args: ['--maxkb=1000']
     -   id: check-merge-conflict
 
+-   repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.4
+    hooks:
+    -   id: gitleaks
+
 -   repo: local
     hooks:
     -   id: debug-check-java
         name: Check for debug logs & prints
         language: pygrep
-        entry: '(System\.out\.println|e\.printStackTrace\(\)|logger\.debug)'
+        entry: '(?i)(System\.(out|err)\.(print|println)|\.printStackTrace\(\)|logger\.(debug|trace|info)|console\.(log|debug|info|warn|error)|Thread\.dumpStack\(\)|new\s+Exception\(\)\.printStackTrace\(\))'
         types: [java]
-
-    -   id: sensitive-check
-        name: Check for sensitive information
-        language: pygrep
-        entry: '(password|secret|key|token).*='
-        types: [file]
-        files: 'application.*\.(properties|yml)$'
 
     -   id: maven-spotless
         name: Maven Spotless
@@ -30,15 +28,9 @@ repos:
         entry: bash -c "./mvnw spotless:apply"
         pass_filenames: false
 
-    -   id: maven-compile
-        name: Maven Compile
+    -   id: maven-compile-and-test
+        name: Maven Compile and Test
         language: system
-        entry: bash -c "./mvnw compile"
-        pass_filenames: false
-
-    -   id: maven-test
-        name: Run Maven Tests
-        language: system
-        entry: bash -c "./mvnw spotless:apply test"
+        entry: bash -c "./mvnw compile test"
         pass_filenames: false
         stages: [pre-push]
