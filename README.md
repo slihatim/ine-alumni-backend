@@ -78,6 +78,21 @@ CREATE DATABASE ine;
 ./mvnw spring-boot:run
 ```
 
+
+# Formatting
+1. To check if your code is formatted run:
+    ```bash
+    ./mvnw spotless:check
+    ```
+2. To format your code:
+    ```bash
+    ./mvnw spotless:apply
+    ```
+
+# API Documentation
+- To access Swagger API documentation, head to:
+    ```http://localhost:8080/swagger-ui.html```
+
 Notes:
 - `.env` is listed in `.gitignore` to avoid committing secrets — keep it private.
 - If your environment does not automatically load `.env` into environment variables, use a tool like `direnv`, `env-cmd`, or configure your IDE to load env files.
