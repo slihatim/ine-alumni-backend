@@ -33,8 +33,7 @@ public class AuthService {
 	public void signUpUser(SignUpRequestDto requestDto) throws UserAlreadyExistsException {
 		if (userService.existsByEmail(requestDto.getEmail())) {
 			throw new UserAlreadyExistsException(
-					"Échec d'inscription : l'email fourni existe déjà. Essayez de vous connecter ou utilisez"
-							+ " un autre email.");
+					"Échec d'inscription : l'email fourni existe déjà. Essayez de vous connecter ou utilisez un autre email.");
 		}
 
 		InptUser user = createUser(requestDto);
@@ -78,8 +77,21 @@ public class AuthService {
 		String role = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
 				.filter(authority -> authority.startsWith("ROLE_")).findFirst().orElse(null);
 
-		SignInResponseDto signInResponseDto = SignInResponseDto.builder().email(userDetails.getUsername()).token(jwt)
-				.type("Bearer").role(Role.valueOf(role)).build();
+		InptUser user = userService.findByEmail(userDetails.getUsername());
+
+		SignInResponseDto signInResponseDto = SignInResponseDto.builder().fullName(user.getFullName())
+				.email(userDetails.getUsername()).token(jwt).type("Bearer").role(Role.valueOf(role))
+				.isEmailVerified(user.getIsEmailVerified()).isAccountVerified(user.getIsAccountVerified()).build();
+
+		return signInResponseDto;
+	}
+
+	public SignInResponseDto getAuthenticationState(String username) {
+		InptUser user = userService.findByEmail(username);
+
+		SignInResponseDto signInResponseDto = SignInResponseDto.builder().fullName(user.getFullName()).email(username)
+				.token(null).type("Bearer").role(user.getRole()).isEmailVerified(user.getIsEmailVerified())
+				.isAccountVerified(user.getIsAccountVerified()).build();
 
 		return signInResponseDto;
 	}
