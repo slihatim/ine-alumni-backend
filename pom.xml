@@ -151,12 +151,12 @@
                             <!-- Optional: Specify the Eclipse JDT version to use. -->
                             <version>4.26</version>
                         </eclipse>
-                        
-                        <importOrder>  
-                            <order>java,javax,org,com,com.ine.backend,</order>  
+
+                        <importOrder>
+                            <order>java,javax,org,com,com.ine.backend,</order>
                         </importOrder>
 
-                        <removeUnusedImports /> 
+                        <removeUnusedImports />
                     </java>
                 </configuration>
                 <executions>

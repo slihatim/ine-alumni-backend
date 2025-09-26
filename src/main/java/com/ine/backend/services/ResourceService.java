@@ -1,4 +1,5 @@
 package com.ine.backend.services;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -11,7 +12,7 @@ public interface ResourceService {
 
 	/**
 	 * Create a new resource
-	 * 
+	 *
 	 * @param resource
 	 *            the resource to create
 	 * @return the created resource
@@ -20,7 +21,7 @@ public interface ResourceService {
 
 	/**
 	 * Get resource by ID
-	 * 
+	 *
 	 * @param id
 	 *            the resource ID
 	 * @return Optional containing the resource if found
@@ -29,14 +30,14 @@ public interface ResourceService {
 
 	/**
 	 * Get all resources
-	 * 
+	 *
 	 * @return list of all resources
 	 */
 	List<Resource> getAllResources();
 
 	/**
 	 * Update an existing resource
-	 * 
+	 *
 	 * @param id
 	 *            the resource ID to update
 	 * @param resourceDetails
@@ -47,7 +48,7 @@ public interface ResourceService {
 
 	/**
 	 * Delete resource by ID
-	 * 
+	 *
 	 * @param id
 	 *            the resource ID to delete
 	 */
@@ -55,7 +56,7 @@ public interface ResourceService {
 
 	/**
 	 * Get resources filtered by category
-	 * 
+	 *
 	 * @param category
 	 *            the category to filter by
 	 * @return list of resources in the specified category
@@ -64,7 +65,7 @@ public interface ResourceService {
 
 	/**
 	 * Get resources filtered by domain
-	 * 
+	 *
 	 * @param domain
 	 *            the domain to filter by
 	 * @return list of resources in the specified domain
@@ -73,7 +74,7 @@ public interface ResourceService {
 
 	/**
 	 * Get resources filtered by both category and domain
-	 * 
+	 *
 	 * @param category
 	 *            the category to filter by
 	 * @param domain
@@ -84,7 +85,7 @@ public interface ResourceService {
 
 	/**
 	 * Search resources by keyword
-	 * 
+	 *
 	 * @param keyword
 	 *            the keyword to search for
 	 * @return list of resources matching the keyword
@@ -93,21 +94,21 @@ public interface ResourceService {
 
 	/**
 	 * Get all available categories
-	 * 
+	 *
 	 * @return list of all distinct categories
 	 */
 	List<Category> getAllCategories();
 
 	/**
 	 * Get all available domains
-	 * 
+	 *
 	 * @return list of all distinct domains
 	 */
 	List<Domain> getAllDomains();
 
 	/**
 	 * Get resources filtered by author
-	 * 
+	 *
 	 * @param author
 	 *            the author to filter by
 	 * @return list of resources by the specified author
