@@ -46,8 +46,8 @@ const NavBar = () => {
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <Link to="/emplois" className="text-sm font-medium hover:underline">
-                  Emplois
+                <Link to="/jobs" className="text-sm font-medium hover:underline">
+                  Offres
                 </Link>
               </NavigationMenuItem>
 
@@ -120,10 +120,7 @@ function HamburgerMenu() {
           <Link to="/evenements" className="w-full">Événements</Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Link to="/emplois" className="w-full">Emplois</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Link to="/stages" className="w-full">Stages</Link>
+          <Link to="/jobs" className="w-full">Offres</Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
           <Link to="/laureats" className="w-full">Laureats</Link>

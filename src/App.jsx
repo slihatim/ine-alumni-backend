@@ -3,8 +3,7 @@ import "./App.css";
 import SharedLayout from "./SharedLayout";
 import Home from "./components/home/Home";
 import Evenements from "./components/evenements/Evenements";
-import Emplois from "./components/emplois/Emplois";
-import Stages from "./components/stages/Stages";
+import Jobs from './components/offers/Jobs'
 import Enreprises from "./components/entreprises/Entreprises";
 import Laureats from "./components/laureats/Laureats";
 import RessourcesLayout from "./components/ressources/RessourcesLayout";
@@ -34,8 +33,7 @@ function App() {
               <Route path="evenements" element={<Evenements />} >
                 <Route path=":id" element={<EventDetails />} />
               </Route>
-              <Route path="emplois" element={<Emplois />} />
-              <Route path="stages" element={<Stages />} />
+              <Route path="jobs" element={<Jobs />} />
               <Route path="entreprises" element={<Enreprises />} />
               <Route path="laureats" element={<Laureats />} />
               <Route path="ressources" element={<RessourcesLayout />}>
@@ -61,5 +59,6 @@ function App() {
     </AuthenticationProvider>
   );
 }
+
 
 export default App;
