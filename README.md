@@ -10,7 +10,7 @@ Follow the steps below to setup and run the project on your local machine.
     ```bash
     git clone https://github.com/slihatim/ine-alumni-backend.git
     ```
-2. Go inside the directory with:  
+2. Go inside the directory with:
     ```bash
     cd ine-alumni-backend
     ```
@@ -63,10 +63,33 @@ cp .env-template .env
 - `APP_JWT_SECRET` and `APP_JWT_EXPIRATION_MS` (use a strong secret for production)
 - `SERVER_PORT` (optional)
 
+Notes:
+- `.env` is listed in `.gitignore` to avoid committing secrets — keep it private.
+- If your environment does not automatically load `.env` into environment variables, use a tool like `direnv`, `env-cmd`, or configure your IDE to load env files.
+
 # API Documentation
 - To access Swagger API documentation, head to:
     ```http://localhost:8080/swagger-ui.html```
 
-Notes:
-- `.env` is listed in `.gitignore` to avoid committing secrets — keep it private.
-- If your environment does not automatically load `.env` into environment variables, use a tool like `direnv`, `env-cmd`, or configure your IDE to load env files.
+# Pre-commit Setup
+Pre-commit hooks help maintain code quality by running checks before each commit.
+
+1. Install pre-commit:
+    ```bash
+    pip install pre-commit
+    ```
+
+2. Install the hooks:
+    ```bash
+    pre-commit install
+    ```
+
+The configured hooks will:
+- Check for trailing whitespace and fix file endings
+- Validate YAML files
+- Prevent large files (>1MB) from being committed
+- Check for debug logs in Java code
+- Look for sensitive information in config files
+- Automatically format code using Spotless
+- Ensure the code compiles successfully
+- Run tests before pushing (pre-push hook)
