@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(value = MethodArgumentNotValidException.class)
 	public ResponseEntity<ApiResponseDto<String>> handleMethodArgumentNotValidException(
 			MethodArgumentNotValidException ex) {
-		return ResponseEntity.badRequest().body(new ApiResponseDto(ex.getMessage(), null, false));
+		return ResponseEntity.badRequest().body(new ApiResponseDto<>(ex.getMessage(), null, false));
 	}
 
 	@ExceptionHandler(value = UserAlreadyExistsException.class)
