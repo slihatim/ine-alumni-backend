@@ -24,6 +24,6 @@ public class LaureatDetailsDTO extends LaureatDTO {
 
 	private List<EducationDTO> educations;
 	private List<ExperienceDTO> experiences;
-	private List<SkillDTO> detailedSkills; 
+	private List<SkillDTO> detailedSkills;
 	private List<ExternalLinkDTO> externalLinks;
 }

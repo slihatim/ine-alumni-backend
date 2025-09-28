@@ -25,7 +25,7 @@ public class LaureatDTO {
 	private String profilePicture;
 	private CompanyDTO currentCompany;
 	private List<Domain> domains; // Derived from experiences
-	private List<String> skills; 
+	private List<String> skills;
 
 	// Constructor for easy mapping
 	public LaureatDTO(Long id, String fullName, Major major, Integer graduationYear, String city, String country,

@@ -47,7 +47,6 @@ public class DataInitializerService implements CommandLineRunner {
 	@Transactional
 	public void run(String... args) throws Exception {
 		if (laureatRepository.count() == 0) {
-			System.out.println("Initializing database with dummy data...");
 
 			List<Company> companies = createCompanies();
 			List<Laureat> alumni = createAlumni(companies);
@@ -57,8 +56,6 @@ public class DataInitializerService implements CommandLineRunner {
 			createExternalLinks(alumni, companies);
 			createCompanyReviews(alumni, companies);
 
-			System.out.println("Database initialized with dummy data successfully!");
-			System.out.println("Created: " + companies.size() + " companies, " + alumni.size() + " alumni");
 		}
 	}
 
