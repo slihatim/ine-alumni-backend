@@ -1,0 +1,53 @@
+spring:
+  # Test configuration with default values to avoid environment variable issues
+  application:
+    name: ${SPRING_APPLICATION_NAME:ine-alumni-backend-test}
+
+  # Use PostgreSQL with defaults for tests
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ine_test}
+    username: ${SPRING_DATASOURCE_USERNAME:hatim}
+    password: ${SPRING_DATASOURCE_PASSWORD:hatim}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:create-drop}
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+
+  # Disable Flyway for tests
+  flyway:
+    enabled: false
+
+  # Mail configuration with defaults for tests
+  mail:
+    host: ${SPRING_MAIL_HOST:localhost}
+    port: ${SPRING_MAIL_PORT:25}
+    username: ${SPRING_MAIL_USERNAME:test}
+    password: ${SPRING_MAIL_PASSWORD:test}
+    properties:
+      mail:
+        smtp:
+          auth: ${SPRING_MAIL_SMTP_AUTH:false}
+          starttls:
+            enable: ${SPRING_MAIL_SMTP_STARTTLS_ENABLE:false}
+
+# Test JWT configuration with defaults
+app:
+  jwtSecret: ${APP_JWT_SECRET:test-secret-key-for-testing-only-do-not-use-in-production}
+  jwtExpirationMs: ${APP_JWT_EXPIRATION_MS:3600000}
+
+server:
+  port: ${SERVER_PORT:0} # Random port for tests by default
+
+# Logging configuration for tests
+logging:
+  level:
+    org.springframework.web: DEBUG
+    com.ine.backend: DEBUG
+    org.hibernate.SQL: ERROR
+    org.hibernate.type.descriptor.sql.BasicBinder: ERROR
