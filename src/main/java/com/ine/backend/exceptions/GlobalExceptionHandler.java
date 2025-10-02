@@ -30,6 +30,22 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(ex.getStatusCode()).body(new ApiResponseDto<>(ex.getMessage(), null, false));
 	}
 
+	@ExceptionHandler(value = ProfileNotFoundException.class)
+	public ResponseEntity<ApiResponseDto<String>> handleProfileNotFoundException(ProfileNotFoundException ex) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponseDto<>(ex.getMessage(), null, false));
+	}
+
+	@ExceptionHandler(value = UnauthorizedProfileAccessException.class)
+	public ResponseEntity<ApiResponseDto<String>> handleUnauthorizedProfileAccessException(
+			UnauthorizedProfileAccessException ex) {
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ApiResponseDto<>(ex.getMessage(), null, false));
+	}
+
+	@ExceptionHandler(value = InvalidPasswordException.class)
+	public ResponseEntity<ApiResponseDto<String>> handleInvalidPasswordException(InvalidPasswordException ex) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto<>(ex.getMessage(), null, false));
+	}
+
 	@ExceptionHandler(value = Exception.class)
 	public ResponseEntity<ApiResponseDto<String>> handleException(Exception ex) {
 		Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
