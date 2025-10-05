@@ -62,8 +62,8 @@ public class EventController {
 	}
 
 	// Get event by ID - accessible to users with "events:read" authority
-	@GetMapping("/{id}")
-	@PreAuthorize("hasAuthority('events:read')")
+	@GetMapping("/public/{id}")
+	// @PreAuthorize("hasAuthority('events:read')")
 	public ResponseEntity<ApiResponseDto<EventResponseDto>> getEventById(@PathVariable Long id) {
 		try {
 			return eventService.getEventById(id).map(event -> {
