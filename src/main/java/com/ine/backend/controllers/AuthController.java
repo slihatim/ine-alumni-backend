@@ -18,7 +18,6 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/api/v1/auth")
 @AllArgsConstructor
 public class AuthController {

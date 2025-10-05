@@ -17,7 +17,6 @@ import com.ine.backend.dto.ApiResponseDto;
 
 @RestController
 @RequestMapping("/api/v1/files")
-@CrossOrigin("*")
 public class FileUploadController {
 
 	private final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/";

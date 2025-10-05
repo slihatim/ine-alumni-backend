@@ -17,7 +17,6 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/events")
-@CrossOrigin("*")
 @Validated
 public class EventController {
 
@@ -45,8 +44,9 @@ public class EventController {
 	}
 
 	// Get all events - accessible to users with "events:read" authority
-	@GetMapping
-	@PreAuthorize("hasAuthority('events:read')")
+	@GetMapping("/public")
+	// @PreAuthorize("hasAuthority('events:read')")
+
 	public ResponseEntity<ApiResponseDto<List<EventResponseDto>>> getAllEvents() {
 		try {
 			List<EventResponseDto> events = eventService.getAllEvents();
