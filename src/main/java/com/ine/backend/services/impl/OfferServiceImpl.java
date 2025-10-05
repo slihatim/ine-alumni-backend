@@ -1,4 +1,4 @@
-package com.ine.backend.services;
+package com.ine.backend.services.impl;
 
 import java.util.List;
 import java.util.Objects;
@@ -16,6 +16,7 @@ import com.ine.backend.entities.OfferType;
 import com.ine.backend.exceptions.OfferNotFoundException;
 import com.ine.backend.repositories.OfferApplicationRepository;
 import com.ine.backend.repositories.OfferRepository;
+import com.ine.backend.services.OfferService;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,0 +1,102 @@
+package com.ine.backend.controllers;
+
+import java.security.Principal;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import com.ine.backend.dto.ApiResponseDto;
+import com.ine.backend.dto.ChangeEmailRequestDto;
+import com.ine.backend.dto.ChangePasswordRequestDto;
+import com.ine.backend.dto.ProfileResponseDto;
+import com.ine.backend.dto.ProfileUpdateRequestDto;
+import com.ine.backend.services.ProfileService;
+
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+
+@RestController
+@RequestMapping("/api/v1/profile")
+@AllArgsConstructor
+public class ProfileController {
+
+	private static final Logger log = LoggerFactory.getLogger(ProfileController.class);
+
+	private final ProfileService profileService;
+
+	@GetMapping("/me")
+	public ResponseEntity<ApiResponseDto<ProfileResponseDto>> getCurrentUserProfile(Principal principal) {
+		log.info("Getting current user profile for: {}", principal.getName());
+		ProfileResponseDto profile = profileService.getCurrentUserProfile(principal.getName());
+		return ResponseEntity.ok(ApiResponseDto.<ProfileResponseDto>builder().message("Profile retrieved successfully")
+				.response(profile).isSuccess(true).build());
+	}
+
+	@GetMapping("/{userId}")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_ADMIN')")
+	public ResponseEntity<ApiResponseDto<ProfileResponseDto>> getUserProfile(@PathVariable Long userId,
+			Principal principal) {
+		log.info("Getting user profile for ID: {} by user: {}", userId, principal.getName());
+		ProfileResponseDto profile = profileService.getUserProfile(userId, principal.getName());
+		return ResponseEntity.ok(ApiResponseDto.<ProfileResponseDto>builder().message("Profile retrieved successfully")
+				.response(profile).isSuccess(true).build());
+	}
+
+	@PutMapping("/me")
+	public ResponseEntity<ApiResponseDto<ProfileResponseDto>> updateCurrentUserProfile(
+			@RequestBody @Valid ProfileUpdateRequestDto updateRequest, Principal principal) {
+		log.info("Updating current user profile for: {}", principal.getName());
+		ProfileResponseDto updatedProfile = profileService.updateCurrentUserProfile(principal.getName(), updateRequest);
+		return ResponseEntity.ok(ApiResponseDto.<ProfileResponseDto>builder().message("Profile updated successfully")
+				.response(updatedProfile).isSuccess(true).build());
+	}
+
+	@PutMapping("/{userId}")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_ADMIN')")
+	public ResponseEntity<ApiResponseDto<ProfileResponseDto>> updateUserProfile(@PathVariable Long userId,
+			@RequestBody @Valid ProfileUpdateRequestDto updateRequest, Principal principal) {
+		log.info("Admin updating user profile for ID: {} by admin: {}", userId, principal.getName());
+		ProfileResponseDto updatedProfile = profileService.updateUserProfile(userId, principal.getName(),
+				updateRequest);
+		return ResponseEntity.ok(ApiResponseDto.<ProfileResponseDto>builder().message("Profile updated successfully")
+				.response(updatedProfile).isSuccess(true).build());
+	}
+
+	@PutMapping("/change-email")
+	public ResponseEntity<ApiResponseDto<String>> changeUserEmail(
+			@RequestBody @Valid ChangeEmailRequestDto changeEmailRequest, Principal principal) {
+		log.info("Changing email for user: {}", principal.getName());
+		String message = profileService.changeUserEmail(principal.getName(), changeEmailRequest);
+		return ResponseEntity
+				.ok(ApiResponseDto.<String>builder().message(message).response(null).isSuccess(true).build());
+	}
+
+	@PutMapping("/change-password")
+	public ResponseEntity<ApiResponseDto<String>> changeUserPassword(
+			@RequestBody @Valid ChangePasswordRequestDto changePasswordRequest, Principal principal) {
+		log.info("Changing password for user: {}", principal.getName());
+		String message = profileService.changeUserPassword(principal.getName(), changePasswordRequest);
+		return ResponseEntity
+				.ok(ApiResponseDto.<String>builder().message(message).response(null).isSuccess(true).build());
+	}
+
+	@PutMapping("/deactivate")
+	public ResponseEntity<ApiResponseDto<String>> deactivateAccount(Principal principal) {
+		log.info("Deactivating account for user: {}", principal.getName());
+		String message = profileService.deactivateAccount(principal.getName());
+		return ResponseEntity
+				.ok(ApiResponseDto.<String>builder().message(message).response(null).isSuccess(true).build());
+	}
+
+	@DeleteMapping("/{userId}")
+	@PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
+	public ResponseEntity<ApiResponseDto<String>> deleteUserAccount(@PathVariable Long userId, Principal principal) {
+		log.info("Super admin deleting user account ID: {} by admin: {}", userId, principal.getName());
+		String message = profileService.deleteUserAccount(userId, principal.getName());
+		return ResponseEntity
+				.ok(ApiResponseDto.<String>builder().message(message).response(null).isSuccess(true).build());
+	}
+}
