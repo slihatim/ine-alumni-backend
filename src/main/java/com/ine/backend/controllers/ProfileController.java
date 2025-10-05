@@ -4,7 +4,6 @@ import java.security.Principal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -30,171 +29,74 @@ public class ProfileController {
 
 	@GetMapping("/me")
 	public ResponseEntity<ApiResponseDto<ProfileResponseDto>> getCurrentUserProfile(Principal principal) {
-		try {
-			log.info("Getting current user profile for: {}", principal.getName());
-			ProfileResponseDto profile = profileService.getCurrentUserProfile(principal.getName());
-			return new ResponseEntity<>(ApiResponseDto.<ProfileResponseDto>builder().message("Profile retrieved")
-					.response(profile).isSuccess(true).build(), HttpStatus.OK);
-		} catch (Exception e) {
-			log.error("Failed to get current user profile. Error: {}", e.getMessage(), e);
-			return new ResponseEntity<>(ApiResponseDto.<ProfileResponseDto>builder().message(e.getMessage())
-					.response(null).isSuccess(false).build(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		log.info("Getting current user profile for: {}", principal.getName());
+		ProfileResponseDto profile = profileService.getCurrentUserProfile(principal.getName());
+		return ResponseEntity.ok(ApiResponseDto.<ProfileResponseDto>builder().message("Profile retrieved successfully")
+				.response(profile).isSuccess(true).build());
 	}
 
 	@GetMapping("/{userId}")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_ADMIN')")
 	public ResponseEntity<ApiResponseDto<ProfileResponseDto>> getUserProfile(@PathVariable Long userId,
 			Principal principal) {
-		try {
-			log.info("Getting user profile for ID: {} by user: {}", userId, principal.getName());
-			ProfileResponseDto profile = profileService.getUserProfile(userId, principal.getName());
-			return new ResponseEntity<>(ApiResponseDto.<ProfileResponseDto>builder().message("Profile retrieved")
-					.response(profile).isSuccess(true).build(), HttpStatus.OK);
-		} catch (RuntimeException e) {
-			log.warn("Profile access error for user {}: {}", userId, e.getMessage(), e);
-			return new ResponseEntity<>(ApiResponseDto.<ProfileResponseDto>builder().message(e.getMessage())
-					.response(null).isSuccess(false).build(), HttpStatus.FORBIDDEN);
-		} catch (Exception e) {
-			log.error("Failed to get user profile {}. Error: {}", userId, e.getMessage(), e);
-			return new ResponseEntity<>(ApiResponseDto.<ProfileResponseDto>builder().message(e.getMessage())
-					.response(null).isSuccess(false).build(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		log.info("Getting user profile for ID: {} by user: {}", userId, principal.getName());
+		ProfileResponseDto profile = profileService.getUserProfile(userId, principal.getName());
+		return ResponseEntity.ok(ApiResponseDto.<ProfileResponseDto>builder().message("Profile retrieved successfully")
+				.response(profile).isSuccess(true).build());
 	}
 
 	@PutMapping("/me")
 	public ResponseEntity<ApiResponseDto<ProfileResponseDto>> updateCurrentUserProfile(
 			@RequestBody @Valid ProfileUpdateRequestDto updateRequest, Principal principal) {
-		try {
-			log.info("Updating current user profile for: {}", principal.getName());
-			ProfileResponseDto updatedProfile = profileService.updateCurrentUserProfile(principal.getName(),
-					updateRequest);
-			return new ResponseEntity<>(ApiResponseDto.<ProfileResponseDto>builder().message("Profile updated")
-					.response(updatedProfile).isSuccess(true).build(), HttpStatus.OK);
-		} catch (RuntimeException e) {
-			log.warn("Business error while updating profile for user {}. Error: {}", principal.getName(),
-					e.getMessage(), e);
-			return new ResponseEntity<>(ApiResponseDto.<ProfileResponseDto>builder().message(e.getMessage())
-					.response(null).isSuccess(false).build(), HttpStatus.BAD_REQUEST);
-		} catch (Exception e) {
-			log.error("Failed to update profile for user {}. Error: {}", principal.getName(), e.getMessage(), e);
-			return new ResponseEntity<>(ApiResponseDto.<ProfileResponseDto>builder().message(e.getMessage())
-					.response(null).isSuccess(false).build(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		log.info("Updating current user profile for: {}", principal.getName());
+		ProfileResponseDto updatedProfile = profileService.updateCurrentUserProfile(principal.getName(), updateRequest);
+		return ResponseEntity.ok(ApiResponseDto.<ProfileResponseDto>builder().message("Profile updated successfully")
+				.response(updatedProfile).isSuccess(true).build());
 	}
 
 	@PutMapping("/{userId}")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_ADMIN')")
 	public ResponseEntity<ApiResponseDto<ProfileResponseDto>> updateUserProfile(@PathVariable Long userId,
 			@RequestBody @Valid ProfileUpdateRequestDto updateRequest, Principal principal) {
-		try {
-			log.info("Admin updating user profile for ID: {} by admin: {}", userId, principal.getName());
-			ProfileResponseDto updatedProfile = profileService.updateUserProfile(userId, principal.getName(),
-					updateRequest);
-			return new ResponseEntity<>(ApiResponseDto.<ProfileResponseDto>builder().message("Profile updated")
-					.response(updatedProfile).isSuccess(true).build(), HttpStatus.OK);
-		} catch (RuntimeException e) {
-			log.warn("Business error while updating profile {} by admin {}. Error: {}", userId, principal.getName(),
-					e.getMessage(), e);
-			return new ResponseEntity<>(ApiResponseDto.<ProfileResponseDto>builder().message(e.getMessage())
-					.response(null).isSuccess(false).build(), HttpStatus.FORBIDDEN);
-		} catch (Exception e) {
-			log.error("Failed to update profile {} by admin {}. Error: {}", userId, principal.getName(), e.getMessage(),
-					e);
-			return new ResponseEntity<>(ApiResponseDto.<ProfileResponseDto>builder().message(e.getMessage())
-					.response(null).isSuccess(false).build(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		log.info("Admin updating user profile for ID: {} by admin: {}", userId, principal.getName());
+		ProfileResponseDto updatedProfile = profileService.updateUserProfile(userId, principal.getName(),
+				updateRequest);
+		return ResponseEntity.ok(ApiResponseDto.<ProfileResponseDto>builder().message("Profile updated successfully")
+				.response(updatedProfile).isSuccess(true).build());
 	}
 
 	@PutMapping("/change-email")
 	public ResponseEntity<ApiResponseDto<String>> changeUserEmail(
 			@RequestBody @Valid ChangeEmailRequestDto changeEmailRequest, Principal principal) {
-		try {
-			log.info("Changing email for user: {}", principal.getName());
-			String message = profileService.changeUserEmail(principal.getName(), changeEmailRequest);
-			return new ResponseEntity<>(
-					ApiResponseDto.<String>builder().message(message).response(null).isSuccess(true).build(),
-					HttpStatus.OK);
-		} catch (RuntimeException e) {
-			log.warn("Business error while changing email for user {}. Error: {}", principal.getName(), e.getMessage(),
-					e);
-			return new ResponseEntity<>(
-					ApiResponseDto.<String>builder().message(e.getMessage()).response(null).isSuccess(false).build(),
-					HttpStatus.CONFLICT);
-		} catch (Exception e) {
-			log.error("Failed to change email for user {}. Error: {}", principal.getName(), e.getMessage(), e);
-			return new ResponseEntity<>(
-					ApiResponseDto.<String>builder().message(e.getMessage()).response(null).isSuccess(false).build(),
-					HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		log.info("Changing email for user: {}", principal.getName());
+		String message = profileService.changeUserEmail(principal.getName(), changeEmailRequest);
+		return ResponseEntity
+				.ok(ApiResponseDto.<String>builder().message(message).response(null).isSuccess(true).build());
 	}
 
 	@PutMapping("/change-password")
 	public ResponseEntity<ApiResponseDto<String>> changeUserPassword(
 			@RequestBody @Valid ChangePasswordRequestDto changePasswordRequest, Principal principal) {
-		try {
-			log.info("Changing password for user: {}", principal.getName());
-			String message = profileService.changeUserPassword(principal.getName(), changePasswordRequest);
-			return new ResponseEntity<>(
-					ApiResponseDto.<String>builder().message(message).response(null).isSuccess(true).build(),
-					HttpStatus.OK);
-		} catch (RuntimeException e) {
-			log.warn("Business error while changing password for user {}. Error: {}", principal.getName(),
-					e.getMessage(), e);
-			return new ResponseEntity<>(
-					ApiResponseDto.<String>builder().message(e.getMessage()).response(null).isSuccess(false).build(),
-					HttpStatus.BAD_REQUEST);
-		} catch (Exception e) {
-			log.error("Failed to change password for user {}. Error: {}", principal.getName(), e.getMessage(), e);
-			return new ResponseEntity<>(
-					ApiResponseDto.<String>builder().message(e.getMessage()).response(null).isSuccess(false).build(),
-					HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		log.info("Changing password for user: {}", principal.getName());
+		String message = profileService.changeUserPassword(principal.getName(), changePasswordRequest);
+		return ResponseEntity
+				.ok(ApiResponseDto.<String>builder().message(message).response(null).isSuccess(true).build());
 	}
 
 	@PutMapping("/deactivate")
 	public ResponseEntity<ApiResponseDto<String>> deactivateAccount(Principal principal) {
-		try {
-			log.info("Deactivating account for user: {}", principal.getName());
-			String message = profileService.deactivateAccount(principal.getName());
-			return new ResponseEntity<>(
-					ApiResponseDto.<String>builder().message(message).response(null).isSuccess(true).build(),
-					HttpStatus.OK);
-		} catch (RuntimeException e) {
-			log.warn("Business error while deactivating account for user {}. Error: {}", principal.getName(),
-					e.getMessage(), e);
-			return new ResponseEntity<>(
-					ApiResponseDto.<String>builder().message(e.getMessage()).response(null).isSuccess(false).build(),
-					HttpStatus.NOT_FOUND);
-		} catch (Exception e) {
-			log.error("Failed to deactivate account for user {}. Error: {}", principal.getName(), e.getMessage(), e);
-			return new ResponseEntity<>(
-					ApiResponseDto.<String>builder().message(e.getMessage()).response(null).isSuccess(false).build(),
-					HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		log.info("Deactivating account for user: {}", principal.getName());
+		String message = profileService.deactivateAccount(principal.getName());
+		return ResponseEntity
+				.ok(ApiResponseDto.<String>builder().message(message).response(null).isSuccess(true).build());
 	}
 
 	@DeleteMapping("/{userId}")
 	@PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
 	public ResponseEntity<ApiResponseDto<String>> deleteUserAccount(@PathVariable Long userId, Principal principal) {
-		try {
-			log.info("Super admin deleting user account ID: {} by admin: {}", userId, principal.getName());
-			String message = profileService.deleteUserAccount(userId, principal.getName());
-			return new ResponseEntity<>(
-					ApiResponseDto.<String>builder().message(message).response(null).isSuccess(true).build(),
-					HttpStatus.OK);
-		} catch (RuntimeException e) {
-			log.warn("Business error while deleting user account {} by admin {}. Error: {}", userId,
-					principal.getName(), e.getMessage(), e);
-			return new ResponseEntity<>(
-					ApiResponseDto.<String>builder().message(e.getMessage()).response(null).isSuccess(false).build(),
-					HttpStatus.FORBIDDEN);
-		} catch (Exception e) {
-			log.error("Failed to delete user account {} by admin {}. Error: {}", userId, principal.getName(),
-					e.getMessage(), e);
-			return new ResponseEntity<>(
-					ApiResponseDto.<String>builder().message(e.getMessage()).response(null).isSuccess(false).build(),
-					HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		log.info("Super admin deleting user account ID: {} by admin: {}", userId, principal.getName());
+		String message = profileService.deleteUserAccount(userId, principal.getName());
+		return ResponseEntity
+				.ok(ApiResponseDto.<String>builder().message(message).response(null).isSuccess(true).build());
 	}
 }

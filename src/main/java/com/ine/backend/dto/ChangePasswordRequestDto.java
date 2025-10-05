@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ChangePasswordRequestDto {
 
-	@NotBlank(message = "Le mot de passe actuel est obligatoire.")
+	@NotBlank(message = "Current password is required.")
 	private String currentPassword;
 
-	@NotBlank(message = "Le nouveau mot de passe est obligatoire.")
-	@Size(min = 8, message = "Le nouveau mot de passe doit contenir au moins 8 caractères.")
+	@NotBlank(message = "New password is required.")
+	@Size(min = 8, message = "New password must be at least 8 characters long.")
 	private String newPassword;
 
-	@NotBlank(message = "La confirmation du mot de passe est obligatoire.")
+	@NotBlank(message = "Password confirmation is required.")
 	private String confirmPassword;
 }

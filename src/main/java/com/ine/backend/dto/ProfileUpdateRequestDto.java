@@ -20,28 +20,28 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProfileUpdateRequestDto {
 
-	@Size(min = 2, max = 100, message = "Le nom complet doit contenir entre 2 et 100 caractères.")
+	@Size(min = 2, max = 100, message = "Full name must be between 2 and 100 characters.")
 	private String fullName;
 
 	private Major major;
 
-	@Min(value = 1961, message = "L'année de promo doit être supérieure ou égale à 1961.")
-	@Max(value = 2200, message = "L'année de promo doit être inférieure ou égale à 2200.")
+	@Min(value = 1961, message = "Graduation year must be greater than or equal to 1961.")
+	@Max(value = 2200, message = "Graduation year must be less than or equal to 2200.")
 	private Integer graduationYear;
 
-	@Pattern(regexp = "^[+]?[0-9\\s-()]{8,15}$", message = "Le numéro de téléphone n'est pas valide.")
+	@Pattern(regexp = "^[+]?[0-9\\s-()]{8,15}$", message = "Phone number is not valid.")
 	private String phoneNumber;
 
 	private LocalDate birthDate;
 
 	private Gender gender;
 
-	@Size(max = 50, message = "Le nom du pays ne doit pas dépasser 50 caractères.")
+	@Size(max = 50, message = "Country name must not exceed 50 characters.")
 	private String country;
 
-	@Size(max = 50, message = "Le nom de la ville ne doit pas dépasser 50 caractères.")
+	@Size(max = 50, message = "City name must not exceed 50 characters.")
 	private String city;
 
-	@Pattern(regexp = "^https://[a-z]{2,3}\\.linkedin\\.com/.*", message = "Le lien LinkedIn n'est pas valide.")
+	@Pattern(regexp = "^https://[a-z]{2,3}\\.linkedin\\.com/.*", message = "LinkedIn link is not valid.")
 	private String linkedinId;
 }

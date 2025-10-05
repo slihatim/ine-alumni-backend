@@ -41,199 +41,290 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	@Transactional(readOnly = true)
 	public ProfileResponseDto getCurrentUserProfile(String userEmail) {
-		try {
-			log.info("Getting profile for user: {}", userEmail);
-			InptUser user = findUserByEmail(userEmail);
-			return profileMapper.toProfileResponseDto(user);
-		} catch (Exception e) {
-			log.error("Error getting profile for user: {}: {}", userEmail, e.getMessage());
-			throw e;
+		log.info("Getting profile for user: {}", userEmail);
+
+		// Validate input
+		if (userEmail == null || userEmail.trim().isEmpty()) {
+			log.warn("Get profile failed - user email is null or empty");
+			throw new IllegalArgumentException("User email cannot be empty.");
 		}
+
+		// Find user - may throw ProfileNotFoundException
+		InptUser user = findUserByEmail(userEmail);
+		return profileMapper.toProfileResponseDto(user);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public ProfileResponseDto getUserProfile(Long userId, String currentUserEmail) {
-		try {
-			log.info("Getting profile for user ID: {} by user: {}", userId, currentUserEmail);
+		log.info("Getting profile for user ID: {} by user: {}", userId, currentUserEmail);
 
-			InptUser currentUser = findUserByEmail(currentUserEmail);
-			InptUser targetUser = findUserById(userId);
-
-			// Check if user can access this profile
-			if (!canAccessProfile(currentUser, targetUser)) {
-				throw new UnauthorizedProfileAccessException("Vous n'êtes pas autorisé à accéder à ce profil.");
-			}
-
-			return profileMapper.toProfileResponseDto(targetUser);
-		} catch (Exception e) {
-			log.error("Error getting profile for user ID: {} by user: {}: {}", userId, currentUserEmail,
-					e.getMessage());
-			throw e;
+		// Validate input
+		if (userId == null || userId <= 0) {
+			log.warn("Get profile failed - invalid user ID: {}", userId);
+			throw new IllegalArgumentException("Invalid user ID.");
 		}
+
+		if (currentUserEmail == null || currentUserEmail.trim().isEmpty()) {
+			log.warn("Get profile failed - current user email is null or empty");
+			throw new IllegalArgumentException("Current user email cannot be empty.");
+		}
+
+		// Find users - may throw ProfileNotFoundException
+		InptUser currentUser = findUserByEmail(currentUserEmail);
+		InptUser targetUser = findUserById(userId);
+
+		// Check if user can access this profile - throws
+		// UnauthorizedProfileAccessException
+		if (!canAccessProfile(currentUser, targetUser)) {
+			log.warn("Unauthorized access attempt for user ID: {} by user: {}", userId, currentUserEmail);
+			throw new UnauthorizedProfileAccessException("You are not authorized to access this profile.");
+		}
+
+		return profileMapper.toProfileResponseDto(targetUser);
 	}
 
 	@Override
 	public ProfileResponseDto updateCurrentUserProfile(String userEmail, ProfileUpdateRequestDto updateRequest) {
-		try {
-			log.info("Updating profile for user: {}", userEmail);
-			InptUser user = findUserByEmail(userEmail);
+		log.info("Updating profile for user: {}", userEmail);
 
-			updateUserFields(user, updateRequest);
-			InptUser savedUser = userRepository.save(user);
-
-			log.info("Profile updated successfully for user: {}", userEmail);
-			return profileMapper.toProfileResponseDto(savedUser);
-		} catch (Exception e) {
-			log.error("Error updating profile for user: {}: {}", userEmail, e.getMessage());
-			throw e;
+		// Validate input
+		if (userEmail == null || userEmail.trim().isEmpty()) {
+			log.warn("Profile update failed - user email is null or empty");
+			throw new IllegalArgumentException("User email cannot be empty.");
 		}
+
+		if (updateRequest == null) {
+			log.warn("Profile update failed for user: {} - update request is null", userEmail);
+			throw new IllegalArgumentException("Update request cannot be null.");
+		}
+
+		// Find user - may throw ProfileNotFoundException
+		InptUser user = findUserByEmail(userEmail);
+
+		// Update fields - may throw IllegalArgumentException
+		updateUserFields(user, updateRequest);
+		InptUser savedUser = userRepository.save(user);
+
+		log.info("Profile updated successfully for user: {}", userEmail);
+		return profileMapper.toProfileResponseDto(savedUser);
 	}
 
 	@Override
 	public ProfileResponseDto updateUserProfile(Long userId, String currentUserEmail,
 			ProfileUpdateRequestDto updateRequest) {
-		try {
-			log.info("Admin updating profile for user ID: {} by admin: {}", userId, currentUserEmail);
+		log.info("Admin updating profile for user ID: {} by admin: {}", userId, currentUserEmail);
 
-			InptUser currentUser = findUserByEmail(currentUserEmail);
-			InptUser targetUser = findUserById(userId);
-
-			// Only admins can update other users' profiles
-			if (!isAdminOrSuperAdmin(currentUser)) {
-				throw new UnauthorizedProfileAccessException(
-						"Seuls les administrateurs peuvent modifier les profils d'autres utilisateurs.");
-			}
-
-			updateUserFields(targetUser, updateRequest);
-			InptUser savedUser = userRepository.save(targetUser);
-
-			log.info("Profile updated successfully for user ID: {} by admin: {}", userId, currentUserEmail);
-			return profileMapper.toProfileResponseDto(savedUser);
-		} catch (Exception e) {
-			log.error("Error updating profile for user ID: {} by admin: {}: {}", userId, currentUserEmail,
-					e.getMessage());
-			throw e;
+		// Validate input
+		if (userId == null || userId <= 0) {
+			log.warn("Profile update failed - invalid user ID: {}", userId);
+			throw new IllegalArgumentException("Invalid user ID.");
 		}
+
+		if (currentUserEmail == null || currentUserEmail.trim().isEmpty()) {
+			log.warn("Profile update failed - current user email is null or empty");
+			throw new IllegalArgumentException("Current user email cannot be empty.");
+		}
+
+		if (updateRequest == null) {
+			log.warn("Profile update failed for user ID: {} - update request is null", userId);
+			throw new IllegalArgumentException("Update request cannot be null.");
+		}
+
+		// Find users - may throw ProfileNotFoundException
+		InptUser currentUser = findUserByEmail(currentUserEmail);
+		InptUser targetUser = findUserById(userId);
+
+		// Only admins can update other users' profiles - throws
+		// UnauthorizedProfileAccessException
+		if (!isAdminOrSuperAdmin(currentUser)) {
+			log.warn("Unauthorized profile update attempt for user ID: {} by non-admin: {}", userId, currentUserEmail);
+			throw new UnauthorizedProfileAccessException("Only administrators can modify other users' profiles.");
+		}
+
+		// Update fields - may throw IllegalArgumentException
+		updateUserFields(targetUser, updateRequest);
+		InptUser savedUser = userRepository.save(targetUser);
+
+		log.info("Profile updated successfully for user ID: {} by admin: {}", userId, currentUserEmail);
+		return profileMapper.toProfileResponseDto(savedUser);
 	}
 
 	@Override
 	public String changeUserEmail(String userEmail, ChangeEmailRequestDto changeEmailRequest) {
-		try {
-			log.info("Changing email for user: {} to: {}", userEmail, changeEmailRequest.getNewEmail());
+		log.info("Changing email for user: {} to: {}", userEmail, changeEmailRequest.getNewEmail());
 
-			InptUser user = findUserByEmail(userEmail);
-
-			// Check if new email already exists
-			InptUser existingUser = userRepository.findByEmail(changeEmailRequest.getNewEmail());
-			if (existingUser != null) {
-				throw new UserAlreadyExistsException("Cette adresse email est déjà utilisée.");
-			}
-
-			user.setEmail(changeEmailRequest.getNewEmail());
-			user.setIsEmailVerified(false); // Require email verification for new email
-			userRepository.save(user);
-
-			log.info("Email changed successfully for user: {}", userEmail);
-			return "L'adresse email a été modifiée avec succès. Veuillez vérifier votre nouvelle adresse email.";
-		} catch (Exception e) {
-			log.error("Error changing email for user: {} to: {}: {}", userEmail, changeEmailRequest.getNewEmail(),
-					e.getMessage());
-			throw e;
+		// Validate input
+		if (changeEmailRequest.getNewEmail() == null || changeEmailRequest.getNewEmail().trim().isEmpty()) {
+			log.warn("Email change failed for user: {} - new email is null or empty", userEmail);
+			throw new IllegalArgumentException("New email address cannot be empty.");
 		}
+
+		// Validate email format (basic check)
+		String newEmail = changeEmailRequest.getNewEmail().trim().toLowerCase();
+		if (!newEmail.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+			log.warn("Email change failed for user: {} - invalid email format: {}", userEmail, newEmail);
+			throw new IllegalArgumentException("Invalid email address format.");
+		}
+
+		// Find current user - may throw ProfileNotFoundException
+		InptUser user = findUserByEmail(userEmail);
+
+		// Check if trying to change to same email
+		if (user.getEmail().equalsIgnoreCase(newEmail)) {
+			log.warn("Email change failed for user: {} - new email is same as current email", userEmail);
+			throw new IllegalArgumentException("New email address must be different from the current one.");
+		}
+
+		// Check if new email already exists - throws UserAlreadyExistsException
+		InptUser existingUser = userRepository.findByEmail(newEmail);
+		if (existingUser != null) {
+			log.warn("Email change failed for user: {} - email already exists: {}", userEmail, newEmail);
+			throw new UserAlreadyExistsException("This email address is already in use.");
+		}
+
+		user.setEmail(newEmail);
+		user.setIsEmailVerified(false); // Require email verification for new email
+		userRepository.save(user);
+
+		log.info("Email changed successfully for user: {} to: {}", userEmail, newEmail);
+		return "Email address has been successfully changed. Please verify your new email address.";
 	}
 
 	@Override
 	public String changeUserPassword(String userEmail, ChangePasswordRequestDto changePasswordRequest) {
-		try {
-			log.info("Changing password for user: {}", userEmail);
+		log.info("Changing password for user: {}", userEmail);
 
-			InptUser user = findUserByEmail(userEmail);
-
-			// Verify current password
-			if (!passwordEncoder.matches(changePasswordRequest.getCurrentPassword(), user.getPassword())) {
-				throw new InvalidPasswordException("Le mot de passe actuel est incorrect.");
-			}
-
-			// Verify password confirmation
-			if (!changePasswordRequest.getNewPassword().equals(changePasswordRequest.getConfirmPassword())) {
-				throw new InvalidPasswordException("La confirmation du mot de passe ne correspond pas.");
-			}
-
-			// Check if new password is different from current
-			if (passwordEncoder.matches(changePasswordRequest.getNewPassword(), user.getPassword())) {
-				throw new InvalidPasswordException("Le nouveau mot de passe doit être différent de l'ancien.");
-			}
-
-			user.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
-			userRepository.save(user);
-
-			log.info("Password changed successfully for user: {}", userEmail);
-			return "Le mot de passe a été modifié avec succès.";
-		} catch (Exception e) {
-			log.error("Error changing password for user: {}: {}", userEmail, e.getMessage());
-			throw e;
+		// Validate input - throws IllegalArgumentException
+		if (changePasswordRequest.getCurrentPassword() == null
+				|| changePasswordRequest.getCurrentPassword().isEmpty()) {
+			log.warn("Password change failed for user: {} - current password is null or empty", userEmail);
+			throw new IllegalArgumentException("Current password cannot be empty.");
 		}
+
+		if (changePasswordRequest.getNewPassword() == null || changePasswordRequest.getNewPassword().isEmpty()) {
+			log.warn("Password change failed for user: {} - new password is null or empty", userEmail);
+			throw new IllegalArgumentException("New password cannot be empty.");
+		}
+
+		if (changePasswordRequest.getConfirmPassword() == null
+				|| changePasswordRequest.getConfirmPassword().isEmpty()) {
+			log.warn("Password change failed for user: {} - confirm password is null or empty", userEmail);
+			throw new IllegalArgumentException("Password confirmation cannot be empty.");
+		}
+
+		// Validate password strength (minimum 8 characters)
+		if (changePasswordRequest.getNewPassword().length() < 8) {
+			log.warn("Password change failed for user: {} - new password too short", userEmail);
+			throw new InvalidPasswordException("New password must be at least 8 characters long.");
+		}
+
+		// Find user - may throw ProfileNotFoundException
+		InptUser user = findUserByEmail(userEmail);
+
+		// Verify current password - throws InvalidPasswordException
+		if (!passwordEncoder.matches(changePasswordRequest.getCurrentPassword(), user.getPassword())) {
+			log.warn("Password change failed for user: {} - current password incorrect", userEmail);
+			throw new InvalidPasswordException("Current password is incorrect.");
+		}
+
+		// Verify password confirmation - throws InvalidPasswordException
+		if (!changePasswordRequest.getNewPassword().equals(changePasswordRequest.getConfirmPassword())) {
+			log.warn("Password change failed for user: {} - password confirmation mismatch", userEmail);
+			throw new InvalidPasswordException("Password confirmation does not match.");
+		}
+
+		// Check if new password is different from current - throws
+		// InvalidPasswordException
+		if (passwordEncoder.matches(changePasswordRequest.getNewPassword(), user.getPassword())) {
+			log.warn("Password change failed for user: {} - new password same as current", userEmail);
+			throw new InvalidPasswordException("New password must be different from the current password.");
+		}
+
+		user.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
+		userRepository.save(user);
+
+		log.info("Password changed successfully for user: {}", userEmail);
+		return "Password has been successfully changed.";
 	}
 
 	@Override
 	public String deactivateAccount(String userEmail) {
-		try {
-			log.info("Deactivating account for user: {}", userEmail);
+		log.info("Deactivating account for user: {}", userEmail);
 
-			InptUser user = findUserByEmail(userEmail);
-			user.setIsAccountVerified(false);
-			userRepository.save(user);
-
-			log.info("Account deactivated successfully for user: {}", userEmail);
-			return "Le compte a été désactivé avec succès.";
-		} catch (Exception e) {
-			log.error("Error deactivating account for user: {}: {}", userEmail, e.getMessage());
-			throw e;
+		// Validate input
+		if (userEmail == null || userEmail.trim().isEmpty()) {
+			log.warn("Account deactivation failed - user email is null or empty");
+			throw new IllegalArgumentException("User email cannot be empty.");
 		}
+
+		// Find user - may throw ProfileNotFoundException
+		InptUser user = findUserByEmail(userEmail);
+
+		// Check if account is already deactivated
+		if (!user.getIsAccountVerified()) {
+			log.warn("Account deactivation failed for user: {} - account already deactivated", userEmail);
+			throw new IllegalArgumentException("Account is already deactivated.");
+		}
+
+		user.setIsAccountVerified(false);
+		userRepository.save(user);
+
+		log.info("Account deactivated successfully for user: {}", userEmail);
+		return "Account has been successfully deactivated.";
 	}
 
 	@Override
 	public String deleteUserAccount(Long userId, String currentUserEmail) {
-		try {
-			log.info("Admin deleting user account ID: {} by admin: {}", userId, currentUserEmail);
+		log.info("Admin deleting user account ID: {} by admin: {}", userId, currentUserEmail);
 
-			InptUser currentUser = findUserByEmail(currentUserEmail);
-			InptUser targetUser = findUserById(userId);
-
-			// Only super admins can delete accounts
-			if (!isSuperAdmin(currentUser)) {
-				throw new UnauthorizedProfileAccessException(
-						"Seuls les super administrateurs peuvent supprimer des comptes utilisateur.");
-			}
-
-			// Prevent self-deletion
-			if (Objects.equals(currentUser.getId(), targetUser.getId())) {
-				throw new UnauthorizedProfileAccessException("Vous ne pouvez pas supprimer votre propre compte.");
-			}
-
-			userRepository.delete(targetUser);
-
-			log.info("User account deleted successfully ID: {} by admin: {}", userId, currentUserEmail);
-			return "Le compte utilisateur a été supprimé avec succès.";
-		} catch (Exception e) {
-			log.error("Error deleting user account ID: {} by admin: {}: {}", userId, currentUserEmail, e.getMessage());
-			throw e;
+		// Validate input
+		if (userId == null || userId <= 0) {
+			log.warn("Account deletion failed - invalid user ID: {}", userId);
+			throw new IllegalArgumentException("Invalid user ID.");
 		}
+
+		if (currentUserEmail == null || currentUserEmail.trim().isEmpty()) {
+			log.warn("Account deletion failed - current user email is null or empty");
+			throw new IllegalArgumentException("Current user email cannot be empty.");
+		}
+
+		// Find users - may throw ProfileNotFoundException
+		InptUser currentUser = findUserByEmail(currentUserEmail);
+		InptUser targetUser = findUserById(userId);
+
+		// Only super admins can delete accounts - throws
+		// UnauthorizedProfileAccessException
+		if (!isSuperAdmin(currentUser)) {
+			log.warn("Unauthorized account deletion attempt for user ID: {} by non-super-admin: {}", userId,
+					currentUserEmail);
+			throw new UnauthorizedProfileAccessException("Only super administrators can delete user accounts.");
+		}
+
+		// Prevent self-deletion - throws UnauthorizedProfileAccessException
+		if (Objects.equals(currentUser.getId(), targetUser.getId())) {
+			log.warn("Self-deletion attempt blocked for user ID: {} by admin: {}", userId, currentUserEmail);
+			throw new UnauthorizedProfileAccessException("You cannot delete your own account.");
+		}
+
+		userRepository.delete(targetUser);
+
+		log.info("User account deleted successfully ID: {} by admin: {}", userId, currentUserEmail);
+		return "User account has been successfully deleted.";
 	}
 
 	// Helper methods
 	private InptUser findUserByEmail(String email) {
 		InptUser user = userRepository.findByEmail(email);
 		if (user == null) {
-			throw new ProfileNotFoundException("Utilisateur non trouvé avec l'email: " + email);
+			throw new ProfileNotFoundException("User not found with email: " + email);
 		}
 		return user;
 	}
 
 	private InptUser findUserById(Long id) {
 		return userRepository.findById(id)
-				.orElseThrow(() -> new ProfileNotFoundException("Utilisateur non trouvé avec l'ID: " + id));
+				.orElseThrow(() -> new ProfileNotFoundException("User not found with ID: " + id));
 	}
 
 	private boolean canAccessProfile(InptUser currentUser, InptUser targetUser) {
@@ -257,31 +348,68 @@ public class ProfileServiceImpl implements ProfileService {
 	private void updateUserFields(InptUser user, ProfileUpdateRequestDto updateRequest) {
 		// Update fields only if they are provided (not null) - partial updates allowed
 		if (updateRequest.getFullName() != null) {
-			if (updateRequest.getFullName().trim().isEmpty()) {
-				throw new IllegalArgumentException("Le nom complet ne doit pas être vide.");
+			String fullName = updateRequest.getFullName().trim();
+			if (fullName.isEmpty()) {
+				log.warn("Invalid full name - cannot be empty");
+				throw new IllegalArgumentException("Full name must not be empty.");
 			}
-			user.setFullName(updateRequest.getFullName().trim());
+			if (fullName.length() < 2) {
+				log.warn("Invalid full name - too short: {}", fullName);
+				throw new IllegalArgumentException("Full name must be at least 2 characters long.");
+			}
+			user.setFullName(fullName);
 		}
 		if (updateRequest.getMajor() != null) {
 			user.setMajor(updateRequest.getMajor());
 		}
 		if (updateRequest.getGraduationYear() != null) {
-			user.setGraduationYear(updateRequest.getGraduationYear());
+			Integer graduationYear = updateRequest.getGraduationYear();
+			int currentYear = java.time.Year.now().getValue();
+			if (graduationYear < 1900 || graduationYear > currentYear + 10) {
+				log.warn("Invalid graduation year: {}", graduationYear);
+				throw new IllegalArgumentException(
+						"Invalid graduation year. Must be between 1900 and " + (currentYear + 10) + ".");
+			}
+			user.setGraduationYear(graduationYear);
 		}
 		if (updateRequest.getPhoneNumber() != null) {
-			user.setPhoneNumber(updateRequest.getPhoneNumber().trim());
+			String phoneNumber = updateRequest.getPhoneNumber().trim();
+			if (!phoneNumber.isEmpty() && !phoneNumber.matches("^[+]?[0-9\\s\\-()]{8,20}$")) {
+				log.warn("Invalid phone number format: {}", phoneNumber);
+				throw new IllegalArgumentException("Invalid phone number format.");
+			}
+			user.setPhoneNumber(phoneNumber);
 		}
 		if (updateRequest.getBirthDate() != null) {
-			user.setBirthDate(updateRequest.getBirthDate());
+			java.time.LocalDate birthDate = updateRequest.getBirthDate();
+			if (birthDate.isAfter(java.time.LocalDate.now())) {
+				log.warn("Invalid birth date - cannot be in the future: {}", birthDate);
+				throw new IllegalArgumentException("Birth date cannot be in the future.");
+			}
+			if (birthDate.isBefore(java.time.LocalDate.of(1900, 1, 1))) {
+				log.warn("Invalid birth date - too old: {}", birthDate);
+				throw new IllegalArgumentException("Invalid birth date.");
+			}
+			user.setBirthDate(birthDate);
 		}
 		if (updateRequest.getGender() != null) {
 			user.setGender(updateRequest.getGender());
 		}
 		if (updateRequest.getCountry() != null) {
-			user.setCountry(updateRequest.getCountry().trim());
+			String country = updateRequest.getCountry().trim();
+			if (!country.isEmpty() && country.length() < 2) {
+				log.warn("Invalid country name - too short: {}", country);
+				throw new IllegalArgumentException("Country name must be at least 2 characters long.");
+			}
+			user.setCountry(country);
 		}
 		if (updateRequest.getCity() != null) {
-			user.setCity(updateRequest.getCity().trim());
+			String city = updateRequest.getCity().trim();
+			if (!city.isEmpty() && city.length() < 2) {
+				log.warn("Invalid city name - too short: {}", city);
+				throw new IllegalArgumentException("City name must be at least 2 characters long.");
+			}
+			user.setCity(city);
 		}
 		if (updateRequest.getLinkedinId() != null) {
 			user.setLinkedinId(updateRequest.getLinkedinId().trim());

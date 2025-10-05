@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.ine.backend.dto.ApiResponseDto;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,13 +31,16 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
 		final Map<String, Object> body = new HashMap<>();
+		body.put("type", request.getRequestURL().toString().split("/api")[0] + "/errors/unauthorized");
+		body.put("title", "Unauthorized");
 		body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
-		body.put("error", "Unauthorized");
-		body.put("message", authException.getMessage());
-		body.put("path", request.getServletPath());
+		body.put("detail",
+				authException.getMessage() != null
+						? authException.getMessage()
+						: "Full authentication is required to access this resource");
+		body.put("instance", request.getRequestURI());
 
 		final ObjectMapper mapper = new ObjectMapper();
-		mapper.writeValue(response.getOutputStream(),
-				new ApiResponseDto<Map<String, Object>>("Vous n'etes pas autorisé", body, false));
+		mapper.writeValue(response.getOutputStream(), body);
 	}
 }
