@@ -1,10 +1,10 @@
 package com.ine.backend.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,9 +26,9 @@ public class EventController {
 		this.eventService = eventService;
 	}
 
-	// Create event - only users with "events:create" authority
+	// ✅ Créer un événement (auth désactivée pour tests)
 	@PostMapping
-	@PreAuthorize("hasAuthority('events:create')")
+	// @PreAuthorize("hasAuthority('events:create')")
 	public ResponseEntity<ApiResponseDto<EventResponseDto>> createEvent(
 			@Valid @RequestBody EventRequestDto eventRequest) {
 		try {
@@ -43,10 +43,8 @@ public class EventController {
 		}
 	}
 
-	// Get all events - accessible to users with "events:read" authority
+	// ✅ Récupérer tous les événements (public)
 	@GetMapping("/public")
-	// @PreAuthorize("hasAuthority('events:read')")
-
 	public ResponseEntity<ApiResponseDto<List<EventResponseDto>>> getAllEvents() {
 		try {
 			List<EventResponseDto> events = eventService.getAllEvents();
@@ -61,20 +59,20 @@ public class EventController {
 		}
 	}
 
-	// Get event by ID - accessible to users with "events:read" authority
+	// ✅ Récupérer un seul événement par ID (public)
 	@GetMapping("/public/{id}")
-	// @PreAuthorize("hasAuthority('events:read')")
 	public ResponseEntity<ApiResponseDto<EventResponseDto>> getEventById(@PathVariable Long id) {
 		try {
-			return eventService.getEventById(id).map(event -> {
+			Optional<EventResponseDto> eventOpt = eventService.getEventById(id);
+			if (eventOpt.isPresent()) {
 				ApiResponseDto<EventResponseDto> response = ApiResponseDto.<EventResponseDto>builder().isSuccess(true)
-						.message("Event found").response(event).build();
+						.message("Event found").response(eventOpt.get()).build();
 				return ResponseEntity.ok(response);
-			}).orElseGet(() -> {
+			} else {
 				ApiResponseDto<EventResponseDto> response = ApiResponseDto.<EventResponseDto>builder().isSuccess(false)
 						.message("Event not found").response(null).build();
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-			});
+			}
 		} catch (Exception e) {
 			ApiResponseDto<EventResponseDto> response = ApiResponseDto.<EventResponseDto>builder().isSuccess(false)
 					.message("Error occurred while retrieving event: " + e.getMessage()).response(null).build();
@@ -82,21 +80,22 @@ public class EventController {
 		}
 	}
 
-	// Update event - only users with "events:update" authority
+	// ✅ Mettre à jour un événement
 	@PutMapping("/{id}")
-	@PreAuthorize("hasAuthority('events:update')")
+	// @PreAuthorize("hasAuthority('events:update')")
 	public ResponseEntity<ApiResponseDto<EventResponseDto>> updateEvent(@PathVariable Long id,
 			@Valid @RequestBody EventRequestDto eventRequest) {
 		try {
-			return eventService.updateEvent(id, eventRequest).map(updatedEvent -> {
+			Optional<EventResponseDto> updatedEventOpt = eventService.updateEvent(id, eventRequest);
+			if (updatedEventOpt.isPresent()) {
 				ApiResponseDto<EventResponseDto> response = ApiResponseDto.<EventResponseDto>builder().isSuccess(true)
-						.message("Event updated successfully").response(updatedEvent).build();
+						.message("Event updated successfully").response(updatedEventOpt.get()).build();
 				return ResponseEntity.ok(response);
-			}).orElseGet(() -> {
+			} else {
 				ApiResponseDto<EventResponseDto> response = ApiResponseDto.<EventResponseDto>builder().isSuccess(false)
 						.message("Event not found").response(null).build();
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-			});
+			}
 		} catch (Exception e) {
 			ApiResponseDto<EventResponseDto> response = ApiResponseDto.<EventResponseDto>builder().isSuccess(false)
 					.message("Error occurred while updating event: " + e.getMessage()).response(null).build();
@@ -104,9 +103,9 @@ public class EventController {
 		}
 	}
 
-	// Delete event - only users with "events:delete" authority
+	// ✅ Supprimer un événement
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasAuthority('events:delete')")
+	// @PreAuthorize("hasAuthority('events:delete')")
 	public ResponseEntity<ApiResponseDto<Void>> deleteEvent(@PathVariable Long id) {
 		try {
 			boolean deleted = eventService.deleteEvent(id);

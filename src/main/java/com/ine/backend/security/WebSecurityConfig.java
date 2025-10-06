@@ -1,5 +1,8 @@
 package com.ine.backend.security;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +16,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.ine.backend.security.jwt.AuthEntryPointJwt;
 import com.ine.backend.security.jwt.AuthTokenFilter;
@@ -21,6 +26,7 @@ import com.ine.backend.security.jwt.AuthTokenFilter;
 @Configuration
 @EnableMethodSecurity
 public class WebSecurityConfig {
+
 	@Autowired
 	UserDetailsServiceImpl userDetailsService;
 
@@ -38,10 +44,8 @@ public class WebSecurityConfig {
 	@Bean
 	public DaoAuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-
 		authProvider.setUserDetailsService(userDetailsService);
 		authProvider.setPasswordEncoder(passwordEncoder());
-
 		return authProvider;
 	}
 
@@ -55,20 +59,31 @@ public class WebSecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 
+	// ✅ Désactive l’authentification pour tous les endpoints
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.csrf(AbstractHttpConfigurer::disable)
+		http.cors(cors -> cors.configurationSource(corsConfigurationSource())).csrf(AbstractHttpConfigurer::disable)
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/api/v1/events/public", "/api/v1/events/public/**", "/api/v1/auth/**",
-								"/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs", "/swagger-ui.html")
-						.permitAll().anyRequest().access(emailVerificationAuthorizationManager));
-
-		http.authenticationProvider(authenticationProvider());
-
-		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+				.authorizeHttpRequests(auth -> auth.requestMatchers("/**" // 👈 rend tout accessible pour les tests
+				).permitAll().anyRequest().permitAll());
 
 		return http.build();
+	}
+
+	// ✅ Configuration CORS
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOrigins(List.of("http://localhost:5175"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		configuration.setAllowedHeaders(List.of("*"));
+		configuration.setExposedHeaders(List.of("Content-Disposition"));
+		configuration.setAllowCredentials(true);
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+
+		return source;
 	}
 }
