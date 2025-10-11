@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/auth")
+@CrossOrigin(origins = "http://localhost:5173")
 @AllArgsConstructor
 public class AuthController {
 	private AuthService authService;

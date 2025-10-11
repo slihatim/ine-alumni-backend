@@ -22,6 +22,7 @@ import lombok.Data;
 
 @RestController
 @RequestMapping("/api/v1/offers")
+@CrossOrigin(origins = "http://localhost:5173")
 @AllArgsConstructor
 public class OfferController {
 
