@@ -1,4 +1,4 @@
-package com.ine.backend.security;
+package com.ine.backend.services.impl;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

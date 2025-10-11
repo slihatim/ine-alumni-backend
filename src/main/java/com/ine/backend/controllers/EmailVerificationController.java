@@ -1,4 +1,4 @@
-package com.ine.backend.security;
+package com.ine.backend.controllers;
 
 import java.security.Principal;
 
@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.ine.backend.dto.ApiResponseDto;
 import com.ine.backend.entities.User;
+import com.ine.backend.services.EmailVerificationService;
 
 import lombok.RequiredArgsConstructor;
 

@@ -11,8 +11,8 @@ import com.ine.backend.dto.SignInRequestDto;
 import com.ine.backend.dto.SignInResponseDto;
 import com.ine.backend.dto.SignUpRequestDto;
 import com.ine.backend.exceptions.UserAlreadyExistsException;
-import com.ine.backend.security.EmailVerificationService;
 import com.ine.backend.services.AuthService;
+import com.ine.backend.services.EmailVerificationService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

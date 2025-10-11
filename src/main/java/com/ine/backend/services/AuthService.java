@@ -16,8 +16,8 @@ import com.ine.backend.dto.SignInResponseDto;
 import com.ine.backend.dto.SignUpRequestDto;
 import com.ine.backend.entities.*;
 import com.ine.backend.exceptions.UserAlreadyExistsException;
-import com.ine.backend.security.UserDetailsImpl;
 import com.ine.backend.security.jwt.JwtUtils;
+import com.ine.backend.services.impl.UserDetailsImpl;
 
 import lombok.AllArgsConstructor;
 

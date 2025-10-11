@@ -1,4 +1,4 @@
-package com.ine.backend.security;
+package com.ine.backend.services;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ine.backend.entities.User;
-import com.ine.backend.services.UserService;
+import com.ine.backend.security.OtpService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
