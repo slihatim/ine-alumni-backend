@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -11,40 +10,18 @@ import {
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// TODO: Implement filter logic and state management
+// This component currently shows UI placeholders for filters
+// Need to implement:
+// - Filter state management
+// - Filter update logic
+// - Clear filter functionality
+// - Active filters tracking
+// - onChange handler integration
+
 export function FilterPanel({ filters, onChange, className }) {
-  const [activeFilters, setActiveFilters] = useState({});
-
-  const updateFilter = (key, value) => {
-    const newFilters = { ...activeFilters, [key]: value };
-    if (
-      value === null ||
-      value === undefined ||
-      value === "" ||
-      (Array.isArray(value) && value.length === 0)
-    ) {
-      delete newFilters[key];
-    }
-    setActiveFilters(newFilters);
-    onChange(newFilters);
-  };
-
-  const clearFilter = (key) => {
-    const newFilters = { ...activeFilters };
-    delete newFilters[key];
-    setActiveFilters(newFilters);
-    onChange(newFilters);
-  };
-
-  const clearAllFilters = () => {
-    setActiveFilters({});
-    onChange({});
-  };
-
-  const hasActiveFilters = Object.keys(activeFilters).length > 0;
-
+  // TODO: Implement filter rendering logic with proper state management and event handling
   const renderFilter = (filter) => {
-    const value = activeFilters[filter.key];
-
     switch (filter.type) {
       case "select":
         return (
@@ -53,10 +30,9 @@ export function FilterPanel({ filters, onChange, className }) {
               {filter.label}
             </label>
             <Select
-              value={value || undefined}
-              onValueChange={(selectedValue) => {
-                updateFilter(filter.key, selectedValue);
-              }}
+              onValueChange={(value) =>
+                onChange({ type: filter.type, key: filter.key, value })
+              }
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Tous" />
@@ -72,8 +48,7 @@ export function FilterPanel({ filters, onChange, className }) {
           </div>
         );
 
-      case "multiselect": {
-        const selectedValues = value || [];
+      case "multiselect":
         return (
           <div key={filter.key} className="space-y-2">
             <label className="text-sm font-medium text-gray-700">
@@ -87,13 +62,14 @@ export function FilterPanel({ filters, onChange, className }) {
                 >
                   <input
                     type="checkbox"
-                    checked={selectedValues.includes(option.value)}
-                    onChange={(e) => {
-                      const newValues = e.target.checked
-                        ? [...selectedValues, option.value]
-                        : selectedValues.filter((v) => v !== option.value);
-                      updateFilter(filter.key, newValues);
-                    }}
+                    onChange={(e) =>
+                      onChange({
+                        type: filter.type,
+                        key: filter.key,
+                        value: option.value,
+                        checked: e.target.checked,
+                      })
+                    }
                     className="rounded border-gray-300 text-main-blue focus:ring-blue-500"
                   />
                   <span className="text-sm text-gray-700">{option.label}</span>
@@ -102,7 +78,6 @@ export function FilterPanel({ filters, onChange, className }) {
             </div>
           </div>
         );
-      }
 
       case "checkbox":
         return (
@@ -110,8 +85,13 @@ export function FilterPanel({ filters, onChange, className }) {
             <label className="flex items-center space-x-2">
               <input
                 type="checkbox"
-                checked={value || false}
-                onChange={(e) => updateFilter(filter.key, e.target.checked)}
+                onChange={(e) =>
+                  onChange({
+                    type: filter.type,
+                    key: filter.key,
+                    checked: e.target.checked,
+                  })
+                }
                 className="rounded border-gray-300 text-main-blue focus:ring-blue-500"
               />
               <span className="text-sm font-medium text-gray-700">
@@ -133,54 +113,28 @@ export function FilterPanel({ filters, onChange, className }) {
         {filters.map(renderFilter)}
       </div>
 
-      {/* Active Filters Display */}
-      {hasActiveFilters && (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <h4 className="text-sm font-medium text-gray-700">
-              Filtres actifs:
-            </h4>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clearAllFilters}
-              className="text-red-600 hover:text-red-700"
-            >
-              Effacer tout
-            </Button>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(activeFilters).map(([key, value]) => {
-              const filter = filters.find((f) => f.key === key);
-              if (!filter) return null;
-
-              const displayValue = Array.isArray(value)
-                ? value.join(", ")
-                : filter.options?.find((opt) => opt.value === value)?.label ||
-                  value;
-
-              return (
-                <Badge
-                  key={key}
-                  variant="secondary"
-                  className="flex items-center gap-1"
-                >
-                  <span className="text-xs">
-                    {filter.label}: {displayValue}
-                  </span>
-                  <button
-                    onClick={() => clearFilter(key)}
-                    className="ml-1 hover:bg-gray-200 rounded-full p-0.5"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </Badge>
-              );
-            })}
-          </div>
+      {/* TODO: Implement active filters display with proper state management */}
+      {/* This section will show selected filters and allow clearing them */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <h4 className="text-sm font-medium text-gray-700">Filtres actifs:</h4>
+          <Button variant="ghost" size="sm" disabled className="text-gray-400">
+            Effacer tout
+          </Button>
         </div>
-      )}
+
+        <div className="flex flex-wrap gap-2">
+          <Badge
+            variant="secondary"
+            className="flex items-center gap-1 opacity-50"
+          >
+            <span className="text-xs">Exemple de filtre</span>
+            <button disabled className="ml-1 rounded-full p-0.5">
+              <X className="w-3 h-3" />
+            </button>
+          </Badge>
+        </div>
+      </div>
     </div>
   );
 }
