@@ -5,7 +5,4 @@ public class ProfileNotFoundException extends RuntimeException {
 		super(message);
 	}
 
-	public ProfileNotFoundException(String message, Throwable cause) {
-		super(message, cause);
-	}
 }

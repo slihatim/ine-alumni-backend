@@ -28,6 +28,7 @@ public class ProfileController {
 	private final ProfileService profileService;
 
 	@GetMapping("/me")
+	@PreAuthorize("hasAuthority('profile:read')")
 	public ResponseEntity<ApiResponseDto<ProfileResponseDto>> getCurrentUserProfile(Principal principal) {
 		log.info("Getting current user profile for: {}", principal.getName());
 		ProfileResponseDto profile = profileService.getCurrentUserProfile(principal.getName());
@@ -36,7 +37,7 @@ public class ProfileController {
 	}
 
 	@GetMapping("/{userId}")
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_ADMIN')")
+	@PreAuthorize("hasAuthority('profile:read') or hasAuthority('profile:read:all')")
 	public ResponseEntity<ApiResponseDto<ProfileResponseDto>> getUserProfile(@PathVariable Long userId,
 			Principal principal) {
 		log.info("Getting user profile for ID: {} by user: {}", userId, principal.getName());
@@ -46,6 +47,7 @@ public class ProfileController {
 	}
 
 	@PutMapping("/me")
+	@PreAuthorize("hasAuthority('profile:update')")
 	public ResponseEntity<ApiResponseDto<ProfileResponseDto>> updateCurrentUserProfile(
 			@RequestBody @Valid ProfileUpdateRequestDto updateRequest, Principal principal) {
 		log.info("Updating current user profile for: {}", principal.getName());
@@ -55,7 +57,7 @@ public class ProfileController {
 	}
 
 	@PutMapping("/{userId}")
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_ADMIN')")
+	@PreAuthorize("hasAuthority('profile:update') or hasAuthority('profile:update:all')")
 	public ResponseEntity<ApiResponseDto<ProfileResponseDto>> updateUserProfile(@PathVariable Long userId,
 			@RequestBody @Valid ProfileUpdateRequestDto updateRequest, Principal principal) {
 		log.info("Admin updating user profile for ID: {} by admin: {}", userId, principal.getName());
@@ -66,6 +68,7 @@ public class ProfileController {
 	}
 
 	@PutMapping("/change-email")
+	@PreAuthorize("hasAuthority('profile:update')")
 	public ResponseEntity<ApiResponseDto<String>> changeUserEmail(
 			@RequestBody @Valid ChangeEmailRequestDto changeEmailRequest, Principal principal) {
 		log.info("Changing email for user: {}", principal.getName());
@@ -75,6 +78,7 @@ public class ProfileController {
 	}
 
 	@PutMapping("/change-password")
+	@PreAuthorize("hasAuthority('profile:update')")
 	public ResponseEntity<ApiResponseDto<String>> changeUserPassword(
 			@RequestBody @Valid ChangePasswordRequestDto changePasswordRequest, Principal principal) {
 		log.info("Changing password for user: {}", principal.getName());
@@ -84,6 +88,7 @@ public class ProfileController {
 	}
 
 	@PutMapping("/deactivate")
+	@PreAuthorize("hasAuthority('profile:update')")
 	public ResponseEntity<ApiResponseDto<String>> deactivateAccount(Principal principal) {
 		log.info("Deactivating account for user: {}", principal.getName());
 		String message = profileService.deactivateAccount(principal.getName());
@@ -92,7 +97,7 @@ public class ProfileController {
 	}
 
 	@DeleteMapping("/{userId}")
-	@PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
+	@PreAuthorize("hasAuthority('profile:delete:all')")
 	public ResponseEntity<ApiResponseDto<String>> deleteUserAccount(@PathVariable Long userId, Principal principal) {
 		log.info("Super admin deleting user account ID: {} by admin: {}", userId, principal.getName());
 		String message = profileService.deleteUserAccount(userId, principal.getName());

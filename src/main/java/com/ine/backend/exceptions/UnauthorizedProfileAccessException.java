@@ -5,7 +5,4 @@ public class UnauthorizedProfileAccessException extends RuntimeException {
 		super(message);
 	}
 
-	public UnauthorizedProfileAccessException(String message, Throwable cause) {
-		super(message, cause);
-	}
 }

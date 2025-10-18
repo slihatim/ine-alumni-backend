@@ -5,7 +5,4 @@ public class InvalidPasswordException extends RuntimeException {
 		super(message);
 	}
 
-	public InvalidPasswordException(String message, Throwable cause) {
-		super(message, cause);
-	}
 }
