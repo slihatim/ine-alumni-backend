@@ -1,18 +1,18 @@
 package com.ine.backend.services.impl;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ine.backend.dto.ChangeEmailRequestDto;
-import com.ine.backend.dto.ChangePasswordRequestDto;
-import com.ine.backend.dto.ProfileResponseDto;
-import com.ine.backend.dto.ProfileUpdateRequestDto;
+import com.ine.backend.dto.*;
 import com.ine.backend.entities.InptUser;
 import com.ine.backend.entities.Role;
 import com.ine.backend.exceptions.InvalidPasswordException;
@@ -21,10 +21,15 @@ import com.ine.backend.exceptions.UnauthorizedProfileAccessException;
 import com.ine.backend.exceptions.UserAlreadyExistsException;
 import com.ine.backend.mappers.ProfileMapper;
 import com.ine.backend.repositories.UserRepository;
+import com.ine.backend.security.jwt.JwtUtils;
+import com.ine.backend.services.EmailVerificationService;
 import com.ine.backend.services.ProfileService;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class ProfileServiceImpl implements ProfileService {
 
 	private static final Logger log = LoggerFactory.getLogger(ProfileServiceImpl.class);
@@ -37,6 +42,11 @@ public class ProfileServiceImpl implements ProfileService {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+
+	private final EmailVerificationService emailVerificationService;
+
+	@Autowired
+	private JwtUtils jwtUtils;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -151,7 +161,8 @@ public class ProfileServiceImpl implements ProfileService {
 	}
 
 	@Override
-	public String changeUserEmail(String userEmail, ChangeEmailRequestDto changeEmailRequest) {
+	@Transactional
+	public ChangeEmailResponseDto changeUserEmail(String userEmail, ChangeEmailRequestDto changeEmailRequest) {
 		log.info("Changing email for user: {} to: {}", userEmail, changeEmailRequest.getNewEmail());
 
 		// Validate input
@@ -185,14 +196,27 @@ public class ProfileServiceImpl implements ProfileService {
 
 		user.setEmail(newEmail);
 		user.setIsEmailVerified(false); // Require email verification for new email
+
 		userRepository.save(user);
 
-		log.info("Email changed successfully for user: {} to: {}", userEmail, newEmail);
-		return "Email address has been successfully changed. Please verify your new email address.";
+		// Generate new JWT token with updated email
+		UserDetailsImpl userDetails = UserDetailsImpl.build(user);
+		Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
+				userDetails.getAuthorities());
+		String newToken = jwtUtils.generateJwtToken(authentication);
+
+		// Send verification token to the new email address
+		emailVerificationService.sendVerificationToken(newEmail);
+
+		log.info("Email changed successfully for user: {} to: {}, email verification code was sent", userEmail,
+				newEmail);
+
+		return ChangeEmailResponseDto.builder().newEmail(newEmail).token(newToken).type("Bearer").build();
 	}
 
 	@Override
-	public String changeUserPassword(String userEmail, ChangePasswordRequestDto changePasswordRequest) {
+	public ChangePasswordResponseDto changeUserPassword(String userEmail,
+			ChangePasswordRequestDto changePasswordRequest) {
 		log.info("Changing password for user: {}", userEmail);
 
 		// Validate input - throws IllegalArgumentException
@@ -221,6 +245,7 @@ public class ProfileServiceImpl implements ProfileService {
 
 		// Find user - may throw ProfileNotFoundException
 		InptUser user = findUserByEmail(userEmail);
+		user.setIsEmailVerified(false); // Require email verification for new email
 
 		// Verify current password - throws InvalidPasswordException
 		if (!passwordEncoder.matches(changePasswordRequest.getCurrentPassword(), user.getPassword())) {
@@ -244,8 +269,16 @@ public class ProfileServiceImpl implements ProfileService {
 		user.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
 		userRepository.save(user);
 
+		// Generate new JWT token
+		UserDetailsImpl userDetails = UserDetailsImpl.build(user);
+		Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
+				userDetails.getAuthorities());
+		String newToken = jwtUtils.generateJwtToken(authentication);
+		emailVerificationService.sendVerificationToken(user.getEmail());
+
 		log.info("Password changed successfully for user: {}", userEmail);
-		return "Password has been successfully changed.";
+
+		return ChangePasswordResponseDto.builder().token(newToken).type("Bearer").build();
 	}
 
 	@Override
@@ -268,6 +301,7 @@ public class ProfileServiceImpl implements ProfileService {
 		}
 
 		user.setIsAccountVerified(false);
+		user.setIsEmailVerified(false);
 		userRepository.save(user);
 
 		log.info("Account deactivated successfully for user: {}", userEmail);
@@ -362,16 +396,6 @@ public class ProfileServiceImpl implements ProfileService {
 		if (updateRequest.getMajor() != null) {
 			user.setMajor(updateRequest.getMajor());
 		}
-		if (updateRequest.getGraduationYear() != null) {
-			Integer graduationYear = updateRequest.getGraduationYear();
-			int currentYear = java.time.Year.now().getValue();
-			if (graduationYear < 1900 || graduationYear > currentYear + 10) {
-				log.warn("Invalid graduation year: {}", graduationYear);
-				throw new IllegalArgumentException(
-						"Invalid graduation year. Must be between 1900 and " + (currentYear + 10) + ".");
-			}
-			user.setGraduationYear(graduationYear);
-		}
 		if (updateRequest.getPhoneNumber() != null) {
 			String phoneNumber = updateRequest.getPhoneNumber().trim();
 			if (!phoneNumber.isEmpty() && !phoneNumber.matches("^[+]?[0-9\\s\\-()]{8,20}$")) {
@@ -381,38 +405,28 @@ public class ProfileServiceImpl implements ProfileService {
 			user.setPhoneNumber(phoneNumber);
 		}
 		if (updateRequest.getBirthDate() != null) {
-			java.time.LocalDate birthDate = updateRequest.getBirthDate();
-			if (birthDate.isAfter(java.time.LocalDate.now())) {
+			LocalDate birthDate = updateRequest.getBirthDate();
+			if (birthDate.isAfter(LocalDate.now())) {
 				log.warn("Invalid birth date - cannot be in the future: {}", birthDate);
 				throw new IllegalArgumentException("Birth date cannot be in the future.");
 			}
-			if (birthDate.isBefore(java.time.LocalDate.of(1900, 1, 1))) {
+			if (birthDate.isBefore(LocalDate.of(1900, 1, 1))) {
 				log.warn("Invalid birth date - too old: {}", birthDate);
 				throw new IllegalArgumentException("Invalid birth date.");
 			}
 			user.setBirthDate(birthDate);
 		}
-		if (updateRequest.getGender() != null) {
-			user.setGender(updateRequest.getGender());
-		}
 		if (updateRequest.getCountry() != null) {
 			String country = updateRequest.getCountry().trim();
-			if (!country.isEmpty() && country.length() < 2) {
-				log.warn("Invalid country name - too short: {}", country);
-				throw new IllegalArgumentException("Country name must be at least 2 characters long.");
-			}
 			user.setCountry(country);
 		}
 		if (updateRequest.getCity() != null) {
 			String city = updateRequest.getCity().trim();
-			if (!city.isEmpty() && city.length() < 2) {
-				log.warn("Invalid city name - too short: {}", city);
-				throw new IllegalArgumentException("City name must be at least 2 characters long.");
-			}
 			user.setCity(city);
 		}
 		if (updateRequest.getLinkedinId() != null) {
 			user.setLinkedinId(updateRequest.getLinkedinId().trim());
 		}
+
 	}
 }

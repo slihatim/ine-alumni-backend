@@ -1,9 +1,6 @@
 package com.ine.backend.services;
 
-import com.ine.backend.dto.ChangeEmailRequestDto;
-import com.ine.backend.dto.ChangePasswordRequestDto;
-import com.ine.backend.dto.ProfileResponseDto;
-import com.ine.backend.dto.ProfileUpdateRequestDto;
+import com.ine.backend.dto.*;
 
 public interface ProfileService {
 
@@ -58,9 +55,9 @@ public interface ProfileService {
 	 *            the authenticated user's email
 	 * @param changeEmailRequest
 	 *            the new email request
-	 * @return success message
+	 * @return ChangeEmailResponseDto containing new email and token
 	 */
-	String changeUserEmail(String userEmail, ChangeEmailRequestDto changeEmailRequest);
+	ChangeEmailResponseDto changeUserEmail(String userEmail, ChangeEmailRequestDto changeEmailRequest);
 
 	/**
 	 * Change current user's password
@@ -69,9 +66,9 @@ public interface ProfileService {
 	 *            the authenticated user's email
 	 * @param changePasswordRequest
 	 *            the password change request
-	 * @return success message
+	 * @return ChangePasswordResponseDto containing new token
 	 */
-	String changeUserPassword(String userEmail, ChangePasswordRequestDto changePasswordRequest);
+	ChangePasswordResponseDto changeUserPassword(String userEmail, ChangePasswordRequestDto changePasswordRequest);
 
 	/**
 	 * Deactivate user account (soft delete)

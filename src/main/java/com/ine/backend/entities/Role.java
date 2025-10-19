@@ -29,7 +29,7 @@ public enum Role {
 			Permission.RESOURCES_READ, Permission.RESOURCES_CREATE, Permission.RESOURCES_UPDATE,
 			Permission.RESOURCES_UPDATE_SELF, Permission.RESOURCES_DELETE, Permission.RESOURCES_DELETE_SELF,
 			Permission.PROFILE_READ, Permission.PROFILE_READ_ALL, Permission.PROFILE_UPDATE,
-			Permission.PROFILE_UPDATE_ALL, Permission.PROFILE_DELETE, Permission.PROFILE_DELETE_ALL)),
+			Permission.PROFILE_UPDATE_ALL, Permission.PROFILE_DELETE_ALL)),
 
 	// BDE can manage events and their own profile
 	ROLE_BDE(Set.of(Permission.EVENTS_READ, Permission.EVENTS_CREATE, Permission.EVENTS_UPDATE_SELF,

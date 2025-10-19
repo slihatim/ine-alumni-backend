@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChangeEmailRequestDto {
-
 	@Email(message = "Email address is not valid.")
 	@NotBlank(message = "Email address is required.")
 	private String newEmail;

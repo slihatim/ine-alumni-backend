@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import com.ine.backend.dto.ApiResponseDto;
 import com.ine.backend.dto.ChangeEmailRequestDto;
+import com.ine.backend.dto.ChangeEmailResponseDto;
 import com.ine.backend.dto.ChangePasswordRequestDto;
+import com.ine.backend.dto.ChangePasswordResponseDto;
 import com.ine.backend.dto.ProfileResponseDto;
 import com.ine.backend.dto.ProfileUpdateRequestDto;
 import com.ine.backend.services.ProfileService;
@@ -69,22 +71,24 @@ public class ProfileController {
 
 	@PutMapping("/change-email")
 	@PreAuthorize("hasAuthority('profile:update')")
-	public ResponseEntity<ApiResponseDto<String>> changeUserEmail(
+	public ResponseEntity<ApiResponseDto<ChangeEmailResponseDto>> changeUserEmail(
 			@RequestBody @Valid ChangeEmailRequestDto changeEmailRequest, Principal principal) {
 		log.info("Changing email for user: {}", principal.getName());
-		String message = profileService.changeUserEmail(principal.getName(), changeEmailRequest);
-		return ResponseEntity
-				.ok(ApiResponseDto.<String>builder().message(message).response(null).isSuccess(true).build());
+		ChangeEmailResponseDto response = profileService.changeUserEmail(principal.getName(), changeEmailRequest);
+		return ResponseEntity.ok(ApiResponseDto.<ChangeEmailResponseDto>builder().message(
+				"Email address has been successfully changed. A verification code has been sent to your new email address.")
+				.response(response).isSuccess(true).build());
 	}
 
 	@PutMapping("/change-password")
 	@PreAuthorize("hasAuthority('profile:update')")
-	public ResponseEntity<ApiResponseDto<String>> changeUserPassword(
+	public ResponseEntity<ApiResponseDto<ChangePasswordResponseDto>> changeUserPassword(
 			@RequestBody @Valid ChangePasswordRequestDto changePasswordRequest, Principal principal) {
 		log.info("Changing password for user: {}", principal.getName());
-		String message = profileService.changeUserPassword(principal.getName(), changePasswordRequest);
-		return ResponseEntity
-				.ok(ApiResponseDto.<String>builder().message(message).response(null).isSuccess(true).build());
+		ChangePasswordResponseDto response = profileService.changeUserPassword(principal.getName(),
+				changePasswordRequest);
+		return ResponseEntity.ok(ApiResponseDto.<ChangePasswordResponseDto>builder()
+				.message("Password has been successfully changed.").response(response).isSuccess(true).build());
 	}
 
 	@PutMapping("/deactivate")

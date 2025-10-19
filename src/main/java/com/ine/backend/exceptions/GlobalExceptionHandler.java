@@ -73,4 +73,30 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 				.body(new ApiResponseDto<>("An unexpected error occurred. Please try again.", null, false));
 	}
+
+	@ExceptionHandler(value = EmailAlreadyVerifiedException.class)
+	public ResponseEntity<ApiResponseDto<String>> handleEmailAlreadyVerifiedException(
+			EmailAlreadyVerifiedException ex) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto<>(ex.getMessage(), null, false));
+	}
+
+	@ExceptionHandler(value = InvalidToken.class)
+	public ResponseEntity<ApiResponseDto<String>> invalidToken(InvalidToken ex) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto<>(ex.getMessage(), null, false));
+	}
+
+	@ExceptionHandler(value = UserNotFoundException.class)
+	public ResponseEntity<ApiResponseDto<String>> handleUserNotFoundException(UserNotFoundException ex) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponseDto<>(ex.getMessage(), null, false));
+	}
+
+	@ExceptionHandler(value = NullPointerException.class)
+	public ResponseEntity<ApiResponseDto<String>> handleNullPointerException(NullPointerException ex) {
+		Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+		logger.error("NullPointerException occurred: {}", ex.getMessage(), ex);
+
+		// This typically happens when Principal is null due to authentication failure
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+				.body(new ApiResponseDto<>("Authentication failed. Please login again.", null, false));
+	}
 }

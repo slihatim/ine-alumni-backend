@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.ine.backend.dto.ApiResponseDto;
-import com.ine.backend.entities.User;
+import com.ine.backend.exceptions.UserNotFoundException;
 import com.ine.backend.services.EmailVerificationService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,13 +20,19 @@ public class EmailVerificationController {
 
 	@GetMapping("/resend-verification")
 	public ResponseEntity<ApiResponseDto<Void>> resendVerification(Principal principal) {
+		if (principal == null) {
+			throw new UserNotFoundException("User not found. Please login again.");
+		}
 		emailVerificationService.resendVerificationToken(principal.getName());
-		return ResponseEntity.ok(new ApiResponseDto<>("Un code de verification a été envoyé.", null, true));
+		return ResponseEntity.ok(new ApiResponseDto<>("A verification code has been sent to your email.", null, true));
 	}
 
 	@GetMapping("/verify")
-	public ResponseEntity<ApiResponseDto<Void>> verifyEmail(Principal principal, @RequestParam String token) {
-		final User verifiedUser = emailVerificationService.verifyEmail(principal.getName(), token);
-		return ResponseEntity.ok(new ApiResponseDto<>("l'émail a été verifié", null, true));
+	public ResponseEntity<ApiResponseDto<String>> verifyEmail(Principal principal, @RequestParam String token) {
+		if (principal == null) {
+			throw new UserNotFoundException("User not found. Please login again.");
+		}
+		emailVerificationService.verifyEmail(principal.getName(), token);
+		return ResponseEntity.ok(new ApiResponseDto<>("Email verified.", null, true));
 	}
 }
