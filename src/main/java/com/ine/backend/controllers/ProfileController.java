@@ -48,7 +48,7 @@ public class ProfileController {
 				.response(profile).isSuccess(true).build());
 	}
 
-	@PutMapping("/me")
+	@PatchMapping("/me")
 	@PreAuthorize("hasAuthority('profile:update')")
 	public ResponseEntity<ApiResponseDto<ProfileResponseDto>> updateCurrentUserProfile(
 			@RequestBody @Valid ProfileUpdateRequestDto updateRequest, Principal principal) {
@@ -58,7 +58,7 @@ public class ProfileController {
 				.response(updatedProfile).isSuccess(true).build());
 	}
 
-	@PutMapping("/{userId}")
+	@PatchMapping("/{userId}")
 	@PreAuthorize("hasAuthority('profile:update') or hasAuthority('profile:update:all')")
 	public ResponseEntity<ApiResponseDto<ProfileResponseDto>> updateUserProfile(@PathVariable Long userId,
 			@RequestBody @Valid ProfileUpdateRequestDto updateRequest, Principal principal) {
@@ -69,7 +69,7 @@ public class ProfileController {
 				.response(updatedProfile).isSuccess(true).build());
 	}
 
-	@PutMapping("/change-email")
+	@PatchMapping("/change-email")
 	@PreAuthorize("hasAuthority('profile:update')")
 	public ResponseEntity<ApiResponseDto<ChangeEmailResponseDto>> changeUserEmail(
 			@RequestBody @Valid ChangeEmailRequestDto changeEmailRequest, Principal principal) {
@@ -80,7 +80,7 @@ public class ProfileController {
 				.response(response).isSuccess(true).build());
 	}
 
-	@PutMapping("/change-password")
+	@PatchMapping("/change-password")
 	@PreAuthorize("hasAuthority('profile:update')")
 	public ResponseEntity<ApiResponseDto<ChangePasswordResponseDto>> changeUserPassword(
 			@RequestBody @Valid ChangePasswordRequestDto changePasswordRequest, Principal principal) {
@@ -91,7 +91,7 @@ public class ProfileController {
 				.message("Password has been successfully changed.").response(response).isSuccess(true).build());
 	}
 
-	@PutMapping("/deactivate")
+	@PatchMapping("/deactivate")
 	@PreAuthorize("hasAuthority('profile:update')")
 	public ResponseEntity<ApiResponseDto<String>> deactivateAccount(Principal principal) {
 		log.info("Deactivating account for user: {}", principal.getName());
