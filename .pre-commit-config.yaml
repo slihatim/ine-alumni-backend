@@ -25,12 +25,12 @@ repos:
     -   id: maven-spotless
         name: Maven Spotless
         language: system
-        entry: bash -c "./mvnw spotless:apply"
+        entry: bash -c "set -a && [ -f .env ] && source .env && set +a && ./mvnw spotless:apply"
         pass_filenames: false
 
     -   id: maven-compile-and-test
         name: Maven Compile and Test
         language: system
-        entry: bash -c "./mvnw compile test"
+        entry: bash -c "set -a && [ -f .env ] && source .env && set +a && ./mvnw compile test"
         pass_filenames: false
         stages: [pre-push]
