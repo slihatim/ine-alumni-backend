@@ -8,18 +8,22 @@ import org.hibernate.annotations.UpdateTimestamp;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+@MappedSuperclass
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Setter
 @Getter
-@MappedSuperclass
+@SuperBuilder
 // User Class will handle just authentication logic
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	@NotBlank(message = "Le nom complet ne doit pas être vide.")
+	private String fullName;
 
 	@Email(message = "L'adresse email n'est pas valide.")
 	@NotBlank(message = "L'adresse email est obligatoire.")
@@ -51,6 +55,7 @@ public class User {
 	private Boolean isAccountVerified = true;
 
 	// Personal email verification
+	@Builder.Default
 	private Boolean isEmailVerified = false;
 
 	// for OAuth (Will be discussed in upcomming versions)

@@ -2,13 +2,15 @@ package com.ine.backend.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
-@DiscriminatorValue("LAUREAT")
+@DiscriminatorValue("laureat")
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
+@SuperBuilder
 // Laureat users
 public class Laureat extends InptUser {
 	@ManyToOne

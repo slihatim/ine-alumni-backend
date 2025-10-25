@@ -13,7 +13,10 @@ public enum Permission {
 	// resources permissions
 	RESOURCES_READ("resources:read"), RESOURCES_CREATE("resources:create"), RESOURCES_UPDATE(
 			"resources:update"), RESOURCES_UPDATE_SELF("resources:update:self"), RESOURCES_DELETE(
-					"resources:delete"), RESOURCES_DELETE_SELF("resources:delete:self");
+					"resources:delete"), RESOURCES_DELETE_SELF("resources:delete:self"),
+
+	// admins
+	ADMIN_CREATE("admin:create"), ADMIN_READ("admin:read"), ADMIN_UPDATE("admin:update"), ADMIN_DELETE("admin:delete");
 
 	@Getter
 	private final String permission;

@@ -24,11 +24,8 @@ public enum Role {
 	ROLE_SUPER_ADMIN(Set.of(Permission.EVENTS_READ, Permission.EVENTS_CREATE, Permission.EVENTS_UPDATE,
 			Permission.EVENTS_UPDATE_SELF, Permission.EVENTS_DELETE, Permission.EVENTS_DELETE_SELF,
 			Permission.RESOURCES_READ, Permission.RESOURCES_CREATE, Permission.RESOURCES_UPDATE,
-			Permission.RESOURCES_UPDATE_SELF, Permission.RESOURCES_DELETE, Permission.RESOURCES_DELETE_SELF)),
-
-	// for example BDE, can only update and delete his own events that he created
-	ROLE_BDE(Set.of(Permission.EVENTS_READ, Permission.EVENTS_CREATE, Permission.EVENTS_UPDATE_SELF,
-			Permission.EVENTS_DELETE_SELF));
+			Permission.RESOURCES_UPDATE_SELF, Permission.RESOURCES_DELETE, Permission.RESOURCES_DELETE_SELF,
+			Permission.ADMIN_CREATE, Permission.ADMIN_READ, Permission.ADMIN_UPDATE, Permission.ADMIN_DELETE));
 
 	@Getter
 	private final Set<Permission> permissions;

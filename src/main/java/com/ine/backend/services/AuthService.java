@@ -16,6 +16,7 @@ import com.ine.backend.dto.SignInResponseDto;
 import com.ine.backend.dto.SignUpRequestDto;
 import com.ine.backend.entities.*;
 import com.ine.backend.exceptions.UserAlreadyExistsException;
+import com.ine.backend.repositories.AdminRepository;
 import com.ine.backend.security.UserDetailsImpl;
 import com.ine.backend.security.jwt.JwtUtils;
 
@@ -25,6 +26,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class AuthService {
 	private UserService userService;
+	private AdminRepository adminRepository;
 	private PasswordEncoder passwordEncoder;
 
 	private AuthenticationManager authenticationManager;
@@ -66,7 +68,8 @@ public class AuthService {
 		return user;
 	}
 
-	public SignInResponseDto signInUser(SignInRequestDto requestDto) {
+	// for inpt_users and admins
+	public SignInResponseDto signInUser(SignInRequestDto requestDto, boolean isAdmin) {
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(requestDto.getEmail(), requestDto.getPassword()));
 
@@ -77,7 +80,12 @@ public class AuthService {
 		String role = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
 				.filter(authority -> authority.startsWith("ROLE_")).findFirst().orElse(null);
 
-		InptUser user = userService.findByEmail(userDetails.getUsername());
+		User user;
+		if (isAdmin) {
+			user = adminRepository.findByEmail(userDetails.getUsername());
+		} else {
+			user = userService.findByEmail(userDetails.getUsername());
+		}
 
 		SignInResponseDto signInResponseDto = SignInResponseDto.builder().fullName(user.getFullName())
 				.email(userDetails.getUsername()).token(jwt).type("Bearer").role(Role.valueOf(role))
@@ -86,8 +94,13 @@ public class AuthService {
 		return signInResponseDto;
 	}
 
-	public SignInResponseDto getAuthenticationState(String username) {
-		InptUser user = userService.findByEmail(username);
+	public SignInResponseDto getAuthenticationState(String username, boolean isAdmin) {
+		User user;
+		if (isAdmin) {
+			user = adminRepository.findByEmail(username);
+		} else {
+			user = userService.findByEmail(username);
+		}
 
 		SignInResponseDto signInResponseDto = SignInResponseDto.builder().fullName(user.getFullName()).email(username)
 				.token(null).type("Bearer").role(user.getRole()).isEmailVerified(user.getIsEmailVerified())
