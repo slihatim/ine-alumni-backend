@@ -1,8 +1,6 @@
 package com.ine.backend.security.jwt;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,14 +30,14 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-		final Map<String, Object> body = new HashMap<>();
-		body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
-		body.put("error", "Unauthorized");
-		body.put("message", authException.getMessage());
-		body.put("path", request.getServletPath());
+		String errorMessage = authException.getMessage() != null
+				? authException.getMessage()
+				: "Full authentication is required to access this resource";
+
+		ApiResponseDto<Object> apiResponse = ApiResponseDto.builder().message(errorMessage).response(null)
+				.isSuccess(false).build();
 
 		final ObjectMapper mapper = new ObjectMapper();
-		mapper.writeValue(response.getOutputStream(),
-				new ApiResponseDto<Map<String, Object>>("Vous n'etes pas autorisé", body, false));
+		mapper.writeValue(response.getOutputStream(), apiResponse);
 	}
 }

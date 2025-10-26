@@ -14,24 +14,24 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SignUpRequestDto {
-	@NotBlank(message = "Le nom complet ne doit pas être vide.")
+	@NotBlank(message = "Full name is required.")
 	private String fullName;
 
-	@Email(message = "L'adresse email n'est pas valide.")
-	@NotBlank(message = "L'adresse email est obligatoire.")
+	@Email(message = "Email address is not valid.")
+	@NotBlank(message = "Email address is required.")
 	private String email;
 
-	@NotBlank(message = "Le mot de passe est obligatoire.")
-	@Size(min = 8, message = "Le mot de passe doit contenir au moins 8 caractères.")
-	@Size(max = 25, message = "Le mot de passe ne doit pas depasser 25 caractères.")
+	@NotBlank(message = "Password is required.")
+	@Size(min = 8, message = "Password must be at least 8 characters long.")
+	@Size(max = 25, message = "Password must not exceed 25 characters.")
 	private String password;
 
-	@NotNull(message = "La filière est obligatoire.")
+	@NotNull(message = "Major is required.")
 	private Major major;
 
-	@NotNull(message = "L'année de votre promotion est obligatoire.")
-	@Min(value = 1961, message = "L'année de promo doit être supérieure ou égale à 1961.")
-	@Max(value = 2200, message = "L'année de promo doit être inférieure ou égale à 2200.")
+	@NotNull(message = "Graduation year is required.")
+	@Min(value = 1961, message = "Graduation year must be greater than or equal to 1961.")
+	@Max(value = 2200, message = "Graduation year must be less than or equal to 2200.")
 	private Integer graduationYear;
 
 	private String phoneNumber;
