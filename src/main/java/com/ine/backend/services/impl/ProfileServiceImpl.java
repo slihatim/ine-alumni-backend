@@ -5,7 +5,6 @@ import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +23,7 @@ import com.ine.backend.repositories.UserRepository;
 import com.ine.backend.security.jwt.JwtUtils;
 import com.ine.backend.services.EmailVerificationService;
 import com.ine.backend.services.ProfileService;
+import com.ine.backend.utils.ProfileValidationUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,19 +34,12 @@ public class ProfileServiceImpl implements ProfileService {
 
 	private static final Logger log = LoggerFactory.getLogger(ProfileServiceImpl.class);
 
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private ProfileMapper profileMapper;
-
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-
+	private final UserRepository userRepository;
+	private final ProfileMapper profileMapper;
+	private final PasswordEncoder passwordEncoder;
+	private final ProfileValidationUtils profileValidationUtils;
 	private final EmailVerificationService emailVerificationService;
-
-	@Autowired
-	private JwtUtils jwtUtils;
+	private final JwtUtils jwtUtils;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -171,12 +164,8 @@ public class ProfileServiceImpl implements ProfileService {
 			throw new IllegalArgumentException("New email address cannot be empty.");
 		}
 
-		// Validate email format (basic check)
+		// Validate email format - already handled by @Email annotation in DTO
 		String newEmail = changeEmailRequest.getNewEmail().trim().toLowerCase();
-		if (!newEmail.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
-			log.warn("Email change failed for user: {} - invalid email format: {}", userEmail, newEmail);
-			throw new IllegalArgumentException("Invalid email address format.");
-		}
 
 		// Find current user - may throw ProfileNotFoundException
 		InptUser user = findUserByEmail(userEmail);
@@ -245,7 +234,6 @@ public class ProfileServiceImpl implements ProfileService {
 
 		// Find user - may throw ProfileNotFoundException
 		InptUser user = findUserByEmail(userEmail);
-		user.setIsEmailVerified(false); // Require email verification for new email
 
 		// Verify current password - throws InvalidPasswordException
 		if (!passwordEncoder.matches(changePasswordRequest.getCurrentPassword(), user.getPassword())) {
@@ -274,7 +262,6 @@ public class ProfileServiceImpl implements ProfileService {
 		Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
 				userDetails.getAuthorities());
 		String newToken = jwtUtils.generateJwtToken(authentication);
-		emailVerificationService.sendVerificationToken(user.getEmail());
 
 		log.info("Password changed successfully for user: {}", userEmail);
 
@@ -382,7 +369,13 @@ public class ProfileServiceImpl implements ProfileService {
 	private void updateUserFields(InptUser user, ProfileUpdateRequestDto updateRequest) {
 		// Update fields only if they are provided (not null) - partial updates allowed
 		if (updateRequest.getFullName() != null) {
-			String fullName = updateRequest.getFullName().trim();
+			String fullName = profileValidationUtils.sanitizeString(updateRequest.getFullName());
+
+			if (!profileValidationUtils.isSafeInput(fullName)) {
+				log.warn("Invalid full name - contains potentially dangerous content");
+				throw new IllegalArgumentException("Full name contains invalid characters.");
+			}
+
 			if (fullName.isEmpty()) {
 				log.warn("Invalid full name - cannot be empty");
 				throw new IllegalArgumentException("Full name must not be empty.");
@@ -398,10 +391,7 @@ public class ProfileServiceImpl implements ProfileService {
 		}
 		if (updateRequest.getPhoneNumber() != null) {
 			String phoneNumber = updateRequest.getPhoneNumber().trim();
-			if (!phoneNumber.isEmpty() && !phoneNumber.matches("^[+]?[0-9\\s\\-()]{8,20}$")) {
-				log.warn("Invalid phone number format: {}", phoneNumber);
-				throw new IllegalArgumentException("Invalid phone number format.");
-			}
+			// Phone number validation is already handled by DTO validation
 			user.setPhoneNumber(phoneNumber);
 		}
 		if (updateRequest.getBirthDate() != null) {
@@ -417,15 +407,28 @@ public class ProfileServiceImpl implements ProfileService {
 			user.setBirthDate(birthDate);
 		}
 		if (updateRequest.getCountry() != null) {
-			String country = updateRequest.getCountry().trim();
+			String country = profileValidationUtils.sanitizeString(updateRequest.getCountry());
+			if (!profileValidationUtils.isSafeInput(country)) {
+				log.warn("Invalid country - contains potentially dangerous content");
+				throw new IllegalArgumentException("Country contains invalid characters.");
+			}
 			user.setCountry(country);
 		}
 		if (updateRequest.getCity() != null) {
-			String city = updateRequest.getCity().trim();
+			String city = profileValidationUtils.sanitizeString(updateRequest.getCity());
+			if (!profileValidationUtils.isSafeInput(city)) {
+				log.warn("Invalid city - contains potentially dangerous content");
+				throw new IllegalArgumentException("City contains invalid characters.");
+			}
 			user.setCity(city);
 		}
 		if (updateRequest.getLinkedinId() != null) {
-			user.setLinkedinId(updateRequest.getLinkedinId().trim());
+			String linkedinId = updateRequest.getLinkedinId().trim();
+			if (!profileValidationUtils.isSafeInput(linkedinId)) {
+				log.warn("Invalid LinkedIn URL - contains potentially dangerous content");
+				throw new IllegalArgumentException("LinkedIn URL contains invalid characters.");
+			}
+			user.setLinkedinId(linkedinId);
 		}
 
 	}

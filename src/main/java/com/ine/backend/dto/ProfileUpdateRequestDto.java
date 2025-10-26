@@ -22,7 +22,7 @@ public class ProfileUpdateRequestDto {
 
 	private Major major;
 
-	@Pattern(regexp = "^[+]?[0-9\\s-()]{8,15}$", message = "Phone number is not valid.")
+	@Pattern(regexp = "^[+]?[1-9]\\d{0,3}[0-9\\s\\-()]{6,14}$", message = "Phone number is not valid.")
 	private String phoneNumber;
 
 	private LocalDate birthDate;
@@ -32,6 +32,6 @@ public class ProfileUpdateRequestDto {
 	@Size(min = 4, max = 50, message = "City name must not exceed 50 characters.")
 	private String city;
 
-	@Pattern(regexp = "^https://[a-z]{2,3}\\.linkedin\\.com/.*", message = "LinkedIn link is not valid.")
+	@Pattern(regexp = "^https://([a-z]{2,3}\\.)?linkedin\\.com/(in/[a-zA-Z0-9-_]+/?|pub/[a-zA-Z0-9-_]+/[a-zA-Z0-9]+/[a-zA-Z0-9]+/[a-zA-Z0-9]+/?)$", message = "LinkedIn link is not valid.")
 	private String linkedinId;
 }

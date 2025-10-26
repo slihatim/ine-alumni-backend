@@ -34,22 +34,22 @@ public class AuthController {
 		emailVerificationService.sendVerificationToken(requestDto.getEmail());
 
 		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(new ApiResponseDto<>("Le compte utilisateur a été créé avec succès !", null, true));
+				.body(new ApiResponseDto<>("User account successfully created!", null, true));
 	}
 
 	@PostMapping("/signin")
 	public ResponseEntity<ApiResponseDto<SignInResponseDto>> signInUser(
 			@RequestBody @Valid SignInRequestDto requestDto) {
-		return ResponseEntity.ok(new ApiResponseDto<>("Authentifié", authService.signInUser(requestDto), true));
+		return ResponseEntity.ok(new ApiResponseDto<>("Authenticated", authService.signInUser(requestDto), true));
 	}
 
 	@GetMapping("/validate")
 	public ResponseEntity<ApiResponseDto<SignInResponseDto>> validateAuthentication(Principal principal) {
 		if (principal == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(new ApiResponseDto<>("Authentification expiré", null, false));
+					.body(new ApiResponseDto<>("Authentication expired", null, false));
 		}
-		return ResponseEntity.ok(new ApiResponseDto<>("Authentification valide",
+		return ResponseEntity.ok(new ApiResponseDto<>("Authentication valid",
 				authService.getAuthenticationState(principal.getName()), true));
 	}
 }
