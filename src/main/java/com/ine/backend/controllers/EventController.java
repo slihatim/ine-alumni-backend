@@ -63,16 +63,15 @@ public class EventController {
 	@GetMapping("/public/{id}")
 	public ResponseEntity<ApiResponseDto<EventResponseDto>> getEventById(@PathVariable Long id) {
 		try {
-			Optional<EventResponseDto> eventOpt = eventService.getEventById(id);
-			if (eventOpt.isPresent()) {
+			return eventService.getEventById(id).map(event -> {
 				ApiResponseDto<EventResponseDto> response = ApiResponseDto.<EventResponseDto>builder().isSuccess(true)
-						.message("Event found").response(eventOpt.get()).build();
+						.message("Event found").response(event).build();
 				return ResponseEntity.ok(response);
-			} else {
+			}).orElseGet(() -> {
 				ApiResponseDto<EventResponseDto> response = ApiResponseDto.<EventResponseDto>builder().isSuccess(false)
 						.message("Event not found").response(null).build();
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-			}
+			});
 		} catch (Exception e) {
 			ApiResponseDto<EventResponseDto> response = ApiResponseDto.<EventResponseDto>builder().isSuccess(false)
 					.message("Error occurred while retrieving event: " + e.getMessage()).response(null).build();
