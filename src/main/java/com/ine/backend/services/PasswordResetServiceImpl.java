@@ -27,7 +27,8 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 	public void sendPasswordResetToken(String email) {
 		final InptUser user = userService.findByEmail(email);
 		if (user == null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Aucun compte associé à cet email.");
+			// Security: Don't reveal whether email exists - silently return
+			return;
 		}
 
 		final String token = otpService.generateAndStoreOtp(email);
@@ -47,7 +48,8 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 	public void resetPassword(String email, String token, String newPassword) {
 		final InptUser user = userService.findByEmail(email);
 		if (user == null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Aucun compte associé à cet email.");
+			// Security: Same error message as invalid token to prevent enumeration
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Le code est invalide ou expiré.");
 		}
 
 		if (!otpService.isOtpValid(email, token)) {
