@@ -18,6 +18,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.ine.backend.security.jwt.AuthEntryPointJwt;
 import com.ine.backend.security.jwt.AuthTokenFilter;
+import com.ine.backend.services.impl.UserDetailsServiceImpl;
 
 @Configuration
 @EnableMethodSecurity
@@ -64,7 +65,8 @@ public class WebSecurityConfig {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/api/v1/events/public", "/api/v1/events/public/**", "/api/v1/auth/**",
-								"/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs", "/swagger-ui.html")
+								"/api/v1/password/**", "/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs",
+								"/swagger-ui.html")
 						.permitAll().anyRequest().access(emailVerificationAuthorizationManager));
 
 		http.authenticationProvider(authenticationProvider());

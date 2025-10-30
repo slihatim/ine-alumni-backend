@@ -1,4 +1,4 @@
-package com.ine.backend.security;
+package com.ine.backend.services.impl;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,10 +20,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		User user = userRepository.findByEmail(username);
 		if (user == null) {
 			throw new UsernameNotFoundException("User not found with email: " + username);
-		} /*
-			 * else if(!user.getIsEmailVerified()){ throw new
-			 * EmailVerificationException("l'email n'est pas vérifié."); }
-			 */
+		}
 		return UserDetailsImpl.build(user);
 	}
 }

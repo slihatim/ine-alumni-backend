@@ -11,24 +11,29 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Role {
-	// Student can read resources and events
-	ROLE_USER(Set.of(Permission.EVENTS_READ, Permission.RESOURCES_READ)),
+	// Student can read resources, events and manage their own profile
+	ROLE_USER(Set.of(Permission.EVENTS_READ, Permission.RESOURCES_READ, Permission.PROFILE_READ,
+			Permission.PROFILE_UPDATE)),
 
-	// Admin can manage resources and events (except some super admin actions)
+	// Admin can manage resources, events and read/update all profiles (except
+	// delete)
 	ROLE_ADMIN(Set.of(Permission.EVENTS_READ, Permission.EVENTS_CREATE, Permission.EVENTS_UPDATE,
 			Permission.EVENTS_UPDATE_SELF, Permission.EVENTS_DELETE_SELF, Permission.RESOURCES_READ,
 			Permission.RESOURCES_CREATE, Permission.RESOURCES_UPDATE, Permission.RESOURCES_UPDATE_SELF,
-			Permission.RESOURCES_DELETE, Permission.RESOURCES_DELETE_SELF)),
+			Permission.RESOURCES_DELETE, Permission.RESOURCES_DELETE_SELF, Permission.PROFILE_READ,
+			Permission.PROFILE_READ_ALL, Permission.PROFILE_UPDATE, Permission.PROFILE_UPDATE_ALL)),
 
-	// Super admin has all permissions
+	// Super admin has all permissions including profile deletion
 	ROLE_SUPER_ADMIN(Set.of(Permission.EVENTS_READ, Permission.EVENTS_CREATE, Permission.EVENTS_UPDATE,
 			Permission.EVENTS_UPDATE_SELF, Permission.EVENTS_DELETE, Permission.EVENTS_DELETE_SELF,
 			Permission.RESOURCES_READ, Permission.RESOURCES_CREATE, Permission.RESOURCES_UPDATE,
-			Permission.RESOURCES_UPDATE_SELF, Permission.RESOURCES_DELETE, Permission.RESOURCES_DELETE_SELF)),
+			Permission.RESOURCES_UPDATE_SELF, Permission.RESOURCES_DELETE, Permission.RESOURCES_DELETE_SELF,
+			Permission.PROFILE_READ, Permission.PROFILE_READ_ALL, Permission.PROFILE_UPDATE,
+			Permission.PROFILE_UPDATE_ALL, Permission.PROFILE_DELETE_ALL)),
 
-	// for example BDE, can only update and delete his own events that he created
+	// BDE can manage events and their own profile
 	ROLE_BDE(Set.of(Permission.EVENTS_READ, Permission.EVENTS_CREATE, Permission.EVENTS_UPDATE_SELF,
-			Permission.EVENTS_DELETE_SELF));
+			Permission.EVENTS_DELETE_SELF, Permission.PROFILE_READ, Permission.PROFILE_UPDATE));
 
 	@Getter
 	private final Set<Permission> permissions;
