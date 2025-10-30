@@ -26,9 +26,8 @@ public class EventController {
 		this.eventService = eventService;
 	}
 
-	// ✅ Créer un événement (auth désactivée pour tests)
 	@PostMapping
-	// @PreAuthorize("hasAuthority('events:create')")
+	@PreAuthorize("hasAuthority('events:create')")
 	public ResponseEntity<ApiResponseDto<EventResponseDto>> createEvent(
 			@Valid @RequestBody EventRequestDto eventRequest) {
 		try {
@@ -43,7 +42,6 @@ public class EventController {
 		}
 	}
 
-	// ✅ Récupérer tous les événements (public)
 	@GetMapping("/public")
 	public ResponseEntity<ApiResponseDto<List<EventResponseDto>>> getAllEvents() {
 		try {
@@ -59,7 +57,6 @@ public class EventController {
 		}
 	}
 
-	// ✅ Récupérer un seul événement par ID (public)
 	@GetMapping("/public/{id}")
 	public ResponseEntity<ApiResponseDto<EventResponseDto>> getEventById(@PathVariable Long id) {
 		try {
@@ -79,9 +76,8 @@ public class EventController {
 		}
 	}
 
-	// ✅ Mettre à jour un événement
 	@PutMapping("/{id}")
-	// @PreAuthorize("hasAuthority('events:update')")
+	@PreAuthorize("hasAuthority('events:update')")
 	public ResponseEntity<ApiResponseDto<EventResponseDto>> updateEvent(@PathVariable Long id,
 			@Valid @RequestBody EventRequestDto eventRequest) {
 		try {
@@ -102,9 +98,8 @@ public class EventController {
 		}
 	}
 
-	// ✅ Supprimer un événement
 	@DeleteMapping("/{id}")
-	// @PreAuthorize("hasAuthority('events:delete')")
+	@PreAuthorize("hasAuthority('events:delete')")
 	public ResponseEntity<ApiResponseDto<Void>> deleteEvent(@PathVariable Long id) {
 		try {
 			boolean deleted = eventService.deleteEvent(id);
