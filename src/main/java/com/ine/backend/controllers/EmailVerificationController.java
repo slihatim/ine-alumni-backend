@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.ine.backend.dto.ApiResponseDto;
-import com.ine.backend.entities.User;
 import com.ine.backend.exceptions.UserNotFoundException;
 import com.ine.backend.services.EmailVerificationService;
 
