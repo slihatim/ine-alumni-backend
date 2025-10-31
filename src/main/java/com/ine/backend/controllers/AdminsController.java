@@ -50,7 +50,7 @@ public class AdminsController {
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAuthority('admin:update')")
 	public ResponseEntity<ApiResponseDto<Admin>> updateAdmin(@PathVariable Long id,
-			@RequestBody @Valid AdminCreationRequestDto requestDto) {
+			@RequestBody @Valid AdminCreationRequestDto requestDto) throws UserAlreadyExistsException {
 		Admin updated = adminsService.updateAdmin(id, requestDto);
 		return ResponseEntity.ok(new ApiResponseDto<>("Admin mis à jour", updated, true));
 	}

@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -25,14 +27,15 @@ public class User {
 	@NotBlank(message = "Le nom complet ne doit pas être vide.")
 	private String fullName;
 
-	@Email(message = "L'adresse email n'est pas valide.")
-	@NotBlank(message = "L'adresse email est obligatoire.")
+	@Email(message = "Email address is not valid.")
+	@NotBlank(message = "Email address is required.")
 	@Column(unique = true, nullable = false)
 	private String email;
 
-	@NotBlank(message = "Le mot de passe est obligatoire.")
+	@NotBlank(message = "Password is required.")
 	@Column(nullable = false)
-	@Size(min = 8, message = "Le mot de passe doit contenir au moins 8 caractères.")
+	@Size(min = 8, message = "Password must be at least 8 characters long.")
+	@JsonIgnore
 	private String password;
 
 	@CreationTimestamp
@@ -42,7 +45,7 @@ public class User {
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
 
-	@NotNull(message = "Le rôle de l'utilisateur est obligatoire.")
+	@NotNull(message = "User role is required.")
 	@Column(nullable = false)
 	@Enumerated(value = EnumType.STRING)
 	@Builder.Default
