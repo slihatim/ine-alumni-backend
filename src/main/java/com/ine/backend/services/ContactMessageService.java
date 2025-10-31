@@ -24,7 +24,6 @@ public class ContactMessageService {
 	public void sendMessage(ContactMessage message) {
 		// 1️⃣ Sauvegarde du message dans la base de données
 		repository.save(message);
-		System.out.println("💾 Message sauvegardé dans la base : " + message);
 
 		// 2️⃣ Préparation de l’e-mail
 		SimpleMailMessage mail = new SimpleMailMessage();
@@ -37,12 +36,9 @@ public class ContactMessageService {
 
 		// 3️⃣ Envoi et gestion des erreurs
 		try {
-			System.out.println("🚀 Tentative d’envoi de l’e-mail...");
 			mailSender.send(mail);
-			System.out.println("✅ Email envoyé avec succès à " + mail.getTo()[0]);
 		} catch (Exception e) {
-			System.err.println("❌ Erreur lors de l’envoi de l’email : " + e.getMessage());
-			e.printStackTrace();
+			throw new RuntimeException("Erreur lors de l'envoi de l'email");
 		}
 	}
 }
