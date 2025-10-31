@@ -35,10 +35,7 @@ public class LaureatController {
 
 		PageResponseDTO<LaureatDTO> data = laureatService.getAllLaureats(page, size, sortBy, sortDir);
 		ApiResponseDto<PageResponseDTO<LaureatDTO>> response = ApiResponseDto.<PageResponseDTO<LaureatDTO>>builder()
-				.isSuccess(true)
-				.message("Alumni retrieved successfully")
-				.response(data)
-				.build();
+				.isSuccess(true).message("Alumni retrieved successfully").response(data).build();
 		return ResponseEntity.ok(response);
 	}
 
@@ -51,16 +48,14 @@ public class LaureatController {
 
 		PageResponseDTO<LaureatDTO> data = laureatService.searchLaureats(q, page, size);
 		ApiResponseDto<PageResponseDTO<LaureatDTO>> response = ApiResponseDto.<PageResponseDTO<LaureatDTO>>builder()
-				.isSuccess(true)
-				.message("Alumni search results")
-				.response(data)
-				.build();
+				.isSuccess(true).message("Alumni search results").response(data).build();
 		return ResponseEntity.ok(response);
 	}
 
 	@PostMapping("/filter")
 	@Operation(summary = "Filter alumni with advanced criteria", description = "Filter alumni using multiple criteria such as major, company, graduation year, location, domain, and skills")
-	public ResponseEntity<ApiResponseDto<PageResponseDTO<LaureatDTO>>> filterLaureats(@RequestBody LaureatFilterDTO filter,
+	public ResponseEntity<ApiResponseDto<PageResponseDTO<LaureatDTO>>> filterLaureats(
+			@RequestBody LaureatFilterDTO filter,
 			@Parameter(description = "Page number (0-based)") @RequestParam(defaultValue = "0") int page,
 			@Parameter(description = "Page size") @RequestParam(defaultValue = "12") int size,
 			@Parameter(description = "Sort field") @RequestParam(defaultValue = "fullName") String sortBy,
@@ -68,10 +63,7 @@ public class LaureatController {
 
 		PageResponseDTO<LaureatDTO> data = laureatService.filterLaureats(filter, page, size, sortBy, sortDir);
 		ApiResponseDto<PageResponseDTO<LaureatDTO>> response = ApiResponseDto.<PageResponseDTO<LaureatDTO>>builder()
-				.isSuccess(true)
-				.message("Filtered alumni retrieved")
-				.response(data)
-				.build();
+				.isSuccess(true).message("Filtered alumni retrieved").response(data).build();
 		return ResponseEntity.ok(response);
 	}
 
@@ -81,11 +73,8 @@ public class LaureatController {
 			@Parameter(description = "Alumni ID") @PathVariable Long id) {
 
 		LaureatDetailsDTO laureat = laureatService.getLaureatDetails(id);
-		ApiResponseDto<LaureatDetailsDTO> response = ApiResponseDto.<LaureatDetailsDTO>builder()
-				.isSuccess(true)
-				.message("Alumni details retrieved")
-				.response(laureat)
-				.build();
+		ApiResponseDto<LaureatDetailsDTO> response = ApiResponseDto.<LaureatDetailsDTO>builder().isSuccess(true)
+				.message("Alumni details retrieved").response(laureat).build();
 		return ResponseEntity.ok(response);
 	}
 
@@ -93,11 +82,8 @@ public class LaureatController {
 	@Operation(summary = "Get available majors for filtering", description = "Get list of all available majors that have alumni")
 	public ResponseEntity<ApiResponseDto<List<Major>>> getAvailableMajors() {
 		List<Major> majors = laureatService.getAvailableMajors();
-		ApiResponseDto<List<Major>> response = ApiResponseDto.<List<Major>>builder()
-				.isSuccess(true)
-				.message("Available majors retrieved")
-				.response(majors)
-				.build();
+		ApiResponseDto<List<Major>> response = ApiResponseDto.<List<Major>>builder().isSuccess(true)
+				.message("Available majors retrieved").response(majors).build();
 		return ResponseEntity.ok(response);
 	}
 
@@ -105,22 +91,16 @@ public class LaureatController {
 	@Operation(summary = "Get available graduation years for filtering", description = "Get list of all available graduation years")
 	public ResponseEntity<ApiResponseDto<List<Integer>>> getAvailableGraduationYears() {
 		List<Integer> years = laureatService.getAvailableGraduationYears();
-		ApiResponseDto<List<Integer>> response = ApiResponseDto.<List<Integer>>builder()
-				.isSuccess(true)
-				.message("Available graduation years retrieved")
-				.response(years)
-				.build();
+		ApiResponseDto<List<Integer>> response = ApiResponseDto.<List<Integer>>builder().isSuccess(true)
+				.message("Available graduation years retrieved").response(years).build();
 		return ResponseEntity.ok(response);
 	}
 	@GetMapping("/filter-options/domains")
 	@Operation(summary = "Get available domains for filtering", description = "Get list of all available work domains")
 	public ResponseEntity<ApiResponseDto<Domain[]>> getAvailableDomains() {
 		Domain[] domains = Domain.values();
-		ApiResponseDto<Domain[]> response = ApiResponseDto.<Domain[]>builder()
-				.isSuccess(true)
-				.message("Available domains retrieved")
-				.response(domains)
-				.build();
+		ApiResponseDto<Domain[]> response = ApiResponseDto.<Domain[]>builder().isSuccess(true)
+				.message("Available domains retrieved").response(domains).build();
 		return ResponseEntity.ok(response);
 	}
 }

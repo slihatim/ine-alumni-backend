@@ -31,10 +31,7 @@ public class CompanyController {
 
 		PageResponseDTO<CompanyDTO> data = companyService.getAllCompaniesWithAlumni(page, size, sortBy, sortDir);
 		ApiResponseDto<PageResponseDTO<CompanyDTO>> response = ApiResponseDto.<PageResponseDTO<CompanyDTO>>builder()
-				.isSuccess(true)
-				.message("Companies retrieved successfully")
-				.response(data)
-				.build();
+				.isSuccess(true).message("Companies retrieved successfully").response(data).build();
 		return ResponseEntity.ok(response);
 	}
 
@@ -47,10 +44,7 @@ public class CompanyController {
 
 		PageResponseDTO<CompanyDTO> data = companyService.searchCompanies(q, page, size);
 		ApiResponseDto<PageResponseDTO<CompanyDTO>> response = ApiResponseDto.<PageResponseDTO<CompanyDTO>>builder()
-				.isSuccess(true)
-				.message("Companies search results")
-				.response(data)
-				.build();
+				.isSuccess(true).message("Companies search results").response(data).build();
 		return ResponseEntity.ok(response);
 	}
 
@@ -60,11 +54,8 @@ public class CompanyController {
 			@Parameter(description = "Company ID") @PathVariable Long id) {
 
 		CompanyDetailsDTO company = companyService.getCompanyDetails(id);
-		ApiResponseDto<CompanyDetailsDTO> response = ApiResponseDto.<CompanyDetailsDTO>builder()
-				.isSuccess(true)
-				.message("Company details retrieved")
-				.response(company)
-				.build();
+		ApiResponseDto<CompanyDetailsDTO> response = ApiResponseDto.<CompanyDetailsDTO>builder().isSuccess(true)
+				.message("Company details retrieved").response(company).build();
 		return ResponseEntity.ok(response);
 	}
 
@@ -79,10 +70,7 @@ public class CompanyController {
 
 		PageResponseDTO<LaureatDTO> data = companyService.getCompanyAlumni(id, page, size, sortBy, sortDir);
 		ApiResponseDto<PageResponseDTO<LaureatDTO>> response = ApiResponseDto.<PageResponseDTO<LaureatDTO>>builder()
-				.isSuccess(true)
-				.message("Company alumni retrieved")
-				.response(data)
-				.build();
+				.isSuccess(true).message("Company alumni retrieved").response(data).build();
 		return ResponseEntity.ok(response);
 	}
 
@@ -94,11 +82,9 @@ public class CompanyController {
 			@Parameter(description = "Page size") @RequestParam(defaultValue = "10") int size) {
 
 		PageResponseDTO<CompanyReviewDTO> data = companyService.getCompanyReviews(id, page, size);
-		ApiResponseDto<PageResponseDTO<CompanyReviewDTO>> response = ApiResponseDto.<PageResponseDTO<CompanyReviewDTO>>builder()
-				.isSuccess(true)
-				.message("Company reviews retrieved")
-				.response(data)
-				.build();
+		ApiResponseDto<PageResponseDTO<CompanyReviewDTO>> response = ApiResponseDto
+				.<PageResponseDTO<CompanyReviewDTO>>builder().isSuccess(true).message("Company reviews retrieved")
+				.response(data).build();
 		return ResponseEntity.ok(response);
 	}
 }
