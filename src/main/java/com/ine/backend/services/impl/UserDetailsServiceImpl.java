@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.ine.backend.entities.User;
 import com.ine.backend.repositories.AdminRepository;
 import com.ine.backend.repositories.UserRepository;
-import com.ine.backend.security.UserDetailsImpl;
 
 import lombok.AllArgsConstructor;
 

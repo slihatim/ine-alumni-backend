@@ -1,4 +1,4 @@
-package com.ine.backend.services;
+package com.ine.backend.services.impl;
 
 import java.util.List;
 
@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.ine.backend.entities.InptUser;
 import com.ine.backend.repositories.UserRepository;
+import com.ine.backend.services.UserService;
 
 import lombok.AllArgsConstructor;
 

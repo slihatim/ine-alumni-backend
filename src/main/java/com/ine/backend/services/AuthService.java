@@ -19,6 +19,7 @@ import com.ine.backend.exceptions.UserAlreadyExistsException;
 import com.ine.backend.repositories.AdminRepository;
 import com.ine.backend.security.UserDetailsImpl;
 import com.ine.backend.security.jwt.JwtUtils;
+import com.ine.backend.services.impl.UserDetailsImpl;
 
 import lombok.AllArgsConstructor;
 

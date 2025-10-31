@@ -14,9 +14,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.ine.backend.security.jwt.AuthEntryPointJwt;
 import com.ine.backend.security.jwt.AuthTokenFilter;
+import com.ine.backend.services.impl.UserDetailsServiceImpl;
 
 @Configuration
 @EnableMethodSecurity
@@ -29,6 +31,9 @@ public class WebSecurityConfig {
 
 	@Autowired
 	private EmailVerificationAuthorizationManager emailVerificationAuthorizationManager;
+
+	@Autowired
+	private CorsConfigurationSource corsConfigurationSource;
 
 	@Bean
 	public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -57,12 +62,13 @@ public class WebSecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.csrf(AbstractHttpConfigurer::disable)
+		http.csrf(AbstractHttpConfigurer::disable).cors(cors -> cors.configurationSource(corsConfigurationSource))
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/api/v1/events/public", "/api/v1/events/public/**", "/api/v1/auth/**",
-								"/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs", "/swagger-ui.html")
+								"/api/v1/password/**", "/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs",
+								"/swagger-ui.html", "/api/v1/contact")
 						.permitAll().anyRequest().access(emailVerificationAuthorizationManager));
 
 		http.authenticationProvider(authenticationProvider());
