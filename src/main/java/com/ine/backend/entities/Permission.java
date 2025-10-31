@@ -17,7 +17,10 @@ public enum Permission {
 
 	// profile permissions
 	PROFILE_READ("profile:read"), PROFILE_READ_ALL("profile:read:all"), PROFILE_UPDATE(
-			"profile:update"), PROFILE_UPDATE_ALL("profile:update:all"), PROFILE_DELETE_ALL("profile:delete:all");
+			"profile:update"), PROFILE_UPDATE_ALL("profile:update:all"), PROFILE_DELETE_ALL("profile:delete:all"),
+
+	// admins
+	ADMIN_CREATE("admin:create"), ADMIN_READ("admin:read"), ADMIN_UPDATE("admin:update"), ADMIN_DELETE("admin:delete");
 
 	@Getter
 	private final String permission;

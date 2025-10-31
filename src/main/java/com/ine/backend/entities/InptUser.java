@@ -5,12 +5,12 @@ import java.time.LocalDate;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "inpt_users")
@@ -20,12 +20,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
+@SuperBuilder
 // will handle both Ine and Laureat users
 // It will be one table on the DB that has both Ine fields and Laureat fields
 // with a user_type field that differenciate between ines and laureats
 public class InptUser extends User {
-	@NotBlank(message = "Le nom complet ne doit pas être vide.")
-	private String fullName;
 
 	@NotNull(message = "La filière est obligatoire.")
 	@Column(nullable = false)

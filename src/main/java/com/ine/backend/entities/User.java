@@ -5,21 +5,27 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+@MappedSuperclass
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Setter
 @Getter
-@MappedSuperclass
+@SuperBuilder
 // User Class will handle just authentication logic
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	@NotBlank(message = "Le nom complet ne doit pas être vide.")
+	private String fullName;
 
 	@Email(message = "Email address is not valid.")
 	@NotBlank(message = "Email address is required.")
@@ -29,6 +35,7 @@ public class User {
 	@NotBlank(message = "Password is required.")
 	@Column(nullable = false)
 	@Size(min = 8, message = "Password must be at least 8 characters long.")
+	@JsonIgnore
 	private String password;
 
 	@CreationTimestamp
@@ -51,6 +58,7 @@ public class User {
 	private Boolean isAccountVerified = true;
 
 	// Personal email verification
+	@Builder.Default
 	private Boolean isEmailVerified = false;
 
 	// for OAuth (Will be discussed in upcomming versions)
