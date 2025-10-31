@@ -1,4 +1,4 @@
-package com.ine.backend.services;
+package com.ine.backend.services.impl;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +15,7 @@ import com.ine.backend.entities.InptUser;
 import com.ine.backend.entities.Resource;
 import com.ine.backend.exceptions.ResourceNotFoundException;
 import com.ine.backend.repositories.ResourceRepository;
+import com.ine.backend.services.ResourceService;
 
 @Service
 @Transactional

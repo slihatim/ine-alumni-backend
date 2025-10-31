@@ -1,14 +1,15 @@
-package com.ine.backend.security;
+package com.ine.backend.services;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.ine.backend.entities.User;
-import com.ine.backend.services.UserService;
+import com.ine.backend.exceptions.EmailAlreadyVerifiedException;
+import com.ine.backend.exceptions.InvalidToken;
+import com.ine.backend.exceptions.UserNotFoundException;
+import com.ine.backend.security.OtpService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,26 +36,31 @@ public class EmailVerificationService {
 
 	public void resendVerificationToken(String email) {
 		User user = userService.findByEmail(email);
-		if (user != null && !user.getIsEmailVerified()) {
-			sendVerificationToken(email);
-		} else {
-			throw new ResponseStatusException(HttpStatus.CONFLICT, "l'utilisateur n'existe pas, ou deja vérifié");
+		if (user == null) {
+			throw new UserNotFoundException("User not found with email: " + email);
 		}
+		if (user.getIsEmailVerified()) {
+			throw new EmailAlreadyVerifiedException("Email Already Verified");
+		}
+		sendVerificationToken(email);
 	}
 
 	@Transactional
 	public User verifyEmail(String email, String otp) {
 		final User user = userService.findByEmail(email);
+		if (user == null) {
+			throw new UserNotFoundException("User not found with email: " + email);
+		}
 		if (user.getIsEmailVerified()) {
-			throw new ResponseStatusException(HttpStatus.CONFLICT, "l'émail est deja vérifié.");
+			throw new EmailAlreadyVerifiedException("Email Already Verified");
 		}
 
 		if (!otpService.isOtpValid(email, otp)) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token est invalide ou expiré");
+			throw new InvalidToken("Invalid Token");
 		}
 		otpService.deleteOtp(email);
-
 		user.setIsEmailVerified(true);
 		return user;
 	}
+
 }
