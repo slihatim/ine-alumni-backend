@@ -70,6 +70,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- H2 In-Memory Database for Testing -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- AssertJ for fluent assertions (already included in spring-boot-starter-test) -->
         <!-- Mockito (already included in spring-boot-starter-test) -->
 

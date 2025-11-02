@@ -1,3 +1,20 @@
 spring:
   flyway:
     enabled: false
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+  mail:
+    host: localhost
+    port: 1025
+    username: test@example.com
+
+app:
+  jwtSecret: test-jwt-secret-key-for-testing-min-512-bits-long-abcdef123456789
+  jwtExpirationMs: 86400000
