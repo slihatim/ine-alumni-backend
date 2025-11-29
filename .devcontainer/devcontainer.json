@@ -1,0 +1,23 @@
+{
+  "name": "INE Alumni Backend",
+  "image": "mcr.microsoft.com/devcontainers/java:17",
+
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "pivotal.vscode-spring-boot"
+      ]
+    }
+  },
+
+  "forwardPorts": [8080, 5432, 5050, 6379],
+
+  "postCreateCommand": "chmod +x mvnw",
+
+  "remoteUser": "vscode"
+}
