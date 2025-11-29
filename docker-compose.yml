@@ -1,19 +1,31 @@
+# Docker Compose configuration for INE Alumni Backend
+# Orchestrates PostgreSQL, Redis, PgAdmin, and Spring Boot backend services
+# Usage: docker-compose up -d --build
+
 services:
+  # PostgreSQL database - localhost:5432
   postgres:
     container_name: postgres
     image: postgres:15
     environment:
       POSTGRES_USER: hatim
       POSTGRES_PASSWORD: hatim
-      PGDATA: /var/lib/postgres/data
+      POSTGRES_DB: ine_alumni_db
+      PGDATA: /var/lib/postgresql/data
     volumes:
-      - ine-postgres:/var/lib/postgres/data
+      - ine-postgres:/var/lib/postgresql/data
     ports:
       - 5432:5432
     networks:
       - ine-net
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hatim -d ine_alumni_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  # PgAdmin web interface - localhost:5050
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4
@@ -29,19 +41,57 @@ services:
       - 5050:80
     restart: unless-stopped
 
+  # Redis for caching and sessions - localhost:6379
   redis:
     container_name: redis
-    image: redis:8.2.0
+    image: redis:7-alpine
+    command: redis-server --appendonly yes  # Enable persistence
     ports:
-      - '6379:6379'
+      - 6379:6379
     volumes:
       - ine-redis:/data
+    networks:
+      - ine-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  # Spring Boot backend - localhost:8080
+  # API docs at /swagger-ui.html
+  backend:
+    container_name: ine-alumni-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ine_alumni_db?sslmode=disable  # Use container name for internal networking
+      SPRING_DATASOURCE_USERNAME: hatim
+      SPRING_DATASOURCE_PASSWORD: hatim
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
+      APP_JWT_SECRET: ${APP_JWT_SECRET}
+      APP_JWT_EXPIRATION_MS: ${APP_JWT_EXPIRATION_MS}
+    ports:
+      - 8080:8080
+    networks:
+      - ine-net
+    depends_on:  # Wait for healthy database and redis before starting
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+# Bridge network for inter-service communication
 networks:
   ine-net:
     driver: bridge
     name: ine-net
 
+# Persistent storage volumes
 volumes:
   ine-postgres:
     name: ine-postgres
