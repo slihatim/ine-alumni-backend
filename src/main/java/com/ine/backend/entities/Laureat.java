@@ -5,6 +5,7 @@ import java.util.List;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @DiscriminatorValue("laureat")
@@ -12,6 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @Setter
 @Getter
+@SuperBuilder
 // Laureat users
 public class Laureat extends InptUser {
 	@ManyToOne

@@ -40,7 +40,8 @@ public class AuthController {
 	@PostMapping("/signin")
 	public ResponseEntity<ApiResponseDto<SignInResponseDto>> signInUser(
 			@RequestBody @Valid SignInRequestDto requestDto) {
-		return ResponseEntity.ok(new ApiResponseDto<>("Authenticated", authService.signInUser(requestDto), true));
+		return ResponseEntity
+				.ok(new ApiResponseDto<>("Authenticated", authService.signInUser(requestDto, false), true));
 	}
 
 	@GetMapping("/validate")
@@ -50,6 +51,6 @@ public class AuthController {
 					.body(new ApiResponseDto<>("Authentication expired", null, false));
 		}
 		return ResponseEntity.ok(new ApiResponseDto<>("Authentication valid",
-				authService.getAuthenticationState(principal.getName()), true));
+				authService.getAuthenticationState(principal.getName(), false), true));
 	}
 }
