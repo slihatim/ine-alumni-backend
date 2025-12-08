@@ -262,250 +262,7 @@ sequenceDiagram
     LaureatController-->>Client: 200 OK + ApiResponseDto
 ```
 
-## 5. Entity Relationship Diagram (Corrected)
-
-> **Note:** This diagram represents the actual database tables and their relationships.
-> - `inpt_users` uses Single Table Inheritance: it stores `Laureat` and `Ine` users, differentiated by a `user_type` column.
-> - `admins` is a separate table for `Admin` users. Both inherit fields from the `User` MappedSuperclass.
-> - `Offer` is decoupled from `Company`; it stores the company name as a text field, not a foreign key.
-> - Enums (like Role, Major, etc.) are attributes on the tables, not separate tables.
-
-```mermaid
-erDiagram
-    inpt_users {
-        Long id PK
-        String user_type "Discriminator"
-        String email UK
-        String password
-        String major
-        Integer graduationYear
-        String currentPosition "For Laureat"
-        Long current_company_id FK "For Laureat"
-    }
-
-    admins {
-        Long id PK
-        String email UK
-        String password
-        String fullName
-    }
-
-    companies {
-        Long id PK
-        String name
-        String website
-        String location
-    }
-
-    offers {
-        Long id PK
-        String title
-        String company "Stores company name as text"
-        String location
-        String type "Enum: OfferType"
-    }
-
-    offer_applications {
-        Long id PK
-        Long offer_id FK
-        Long applicant_id FK
-        LocalDateTime appliedAt
-    }
-
-    educations {
-        Long id PK
-        Long laureat_id FK
-        String institutionName
-        String degree
-    }
-
-    experiences {
-        Long id PK
-        Long laureat_id FK
-        Long company_id FK
-        String jobTitle
-    }
-
-    skills {
-        Long id PK
-        Long laureat_id FK
-        String name
-        String category "Enum: SkillCategory"
-    }
-
-    company_reviews {
-        Long id PK
-        Long company_id FK
-        Long laureat_id FK
-        Integer rating
-    }
-
-    external_links {
-        Long id PK
-        Long laureat_id FK "Nullable"
-        Long company_id FK "Nullable"
-        String url
-    }
-
-    events {
-        Long id PK
-        String title
-        String location
-        LocalDateTime date
-    }
-    
-    resources {
-        Long id PK
-        String title
-        String link
-        String category "Enum: Category"
-        String domain "Enum: Domain"
-    }
-
-    contact_messages {
-        Long id PK
-        String email
-        String message
-    }
-
-    inpt_users }o--|| companies : "has current"
-    inpt_users ||--|{ educations : "has"
-    inpt_users ||--|{ experiences : "has"
-    inpt_users ||--|{ skills : "has"
-    inpt_users ||--|{ company_reviews : "writes"
-    inpt_users ||--|{ offer_applications : "applies to"
-    inpt_users ||--|{ external_links : "has"
-    
-    companies ||--|{ experiences : "provides"
-    companies ||--|{ company_reviews : "receives"
-    companies ||--|{ external_links : "has"
-
-    offers ||--|{ offer_applications : "receives"
-```
-
-## 6. Component Diagram
-
-```mermaid
-graph LR
-    subgraph "Frontend"
-        WEB[Web App]
-        MOBILE[Mobile App]
-    end
-
-    subgraph "Spring Boot Application"
-        subgraph "Controllers"
-            C1[Auth]
-            C2[Alumni]
-            C3[Companies]
-            C4[Offers]
-            C5[Events]
-            C6[Resources]
-        end
-
-        subgraph "Security"
-            SEC1[JWT Filter]
-            SEC2[CORS Config]
-            SEC3[Auth Manager]
-        end
-
-        subgraph "Services"
-            S1[Auth Service]
-            S2[Alumni Service]
-            S3[Company Service]
-            S4[Offer Service]
-            S5[Event Service]
-            S6[Email Service]
-        end
-
-        subgraph "Repositories"
-            R1[User Repo]
-            R2[Alumni Repo]
-            R3[Company Repo]
-            R4[Offer Repo]
-            R5[Event Repo]
-        end
-    end
-
-    subgraph "Data Layer"
-        DB[(PostgreSQL)]
-        CACHE[(Redis)]
-    end
-
-    subgraph "External"
-        MAIL[SMTP Server]
-        FILES[File System]
-    end
-
-    WEB --> SEC2
-    MOBILE --> SEC2
-    SEC2 --> SEC1
-    SEC1 --> C1
-    SEC1 --> C2
-    SEC1 --> C3
-    
-    C1 --> S1
-    C2 --> S2
-    C3 --> S3
-    C4 --> S4
-    C5 --> S5
-    
-    S1 --> R1
-    S2 --> R2
-    S3 --> R3
-    S4 --> R4
-    S5 --> R5
-    
-    R1 --> DB
-    R2 --> DB
-    R3 --> DB
-    
-    S1 --> CACHE
-    S6 --> MAIL
-    C6 --> FILES
-
-    style DB fill:#336791,color:#fff
-    style CACHE fill:#DC382D,color:#fff
-    style MAIL fill:#EA4335,color:#fff
-```
-
-## 7. Deployment Diagram
-
-```mermaid
-graph TB
-    subgraph "Client Tier"
-        BROWSER[Web Browser]
-        APP[Mobile App]
-    end
-
-    subgraph "Application Server"
-        SPRINGBOOT[Spring Boot Application<br/>Port: 8080]
-        UPLOADS[File Storage<br/>/uploads]
-    end
-
-    subgraph "Database Tier"
-        POSTGRES[(PostgreSQL<br/>Port: 5432)]
-        REDIS[(Redis<br/>Port: 6379)]
-    end
-
-    subgraph "External Services"
-        GMAIL[Gmail SMTP<br/>Port: 587]
-    end
-
-    BROWSER -->|HTTPS| SPRINGBOOT
-    APP -->|HTTPS| SPRINGBOOT
-    
-    SPRINGBOOT -->|JDBC| POSTGRES
-    SPRINGBOOT -->|Redis Protocol| REDIS
-    SPRINGBOOT -->|SMTP| GMAIL
-    SPRINGBOOT -->|File I/O| UPLOADS
-
-    style SPRINGBOOT fill:#6DB33F,color:#fff
-    style POSTGRES fill:#336791,color:#fff
-    style REDIS fill:#DC382D,color:#fff
-    style GMAIL fill:#EA4335,color:#fff
-```
-
-## 8. Data Model Class Diagram (Corrected)
+## 5. Class Diagram 
 
 > **Note:** This diagram shows the actual class inheritance and composition structure as defined in the Java code.
 > - `User` is an abstract `@MappedSuperclass`.
@@ -632,26 +389,250 @@ classDiagram
 
 ```
 
-## 9. State Diagram - Offer Application
+## 6. Entity Relationship Diagram (Corrected)
+
+> **Note:** This diagram represents the actual database tables and their relationships.
+> - `inpt_users` uses Single Table Inheritance: it stores `Laureat` and `Ine` users, differentiated by a `user_type` column.
+> - `admins` is a separate table for `Admin` users. Both inherit fields from the `User` MappedSuperclass.
+> - `Offer` is decoupled from `Company`; it stores the company name as a text field, not a foreign key.
+> - Enums (like Role, Major, etc.) are attributes on the tables, not separate tables.
 
 ```mermaid
-stateDiagram-v2
-    [*] --> Draft: Create Application
-    Draft --> Submitted: Submit Application
-    Submitted --> UnderReview: Company Reviews
-    UnderReview --> Shortlisted: Candidate Selected
-    UnderReview --> Rejected: Candidate Not Selected
-    Shortlisted --> Interviewed: Schedule Interview
-    Interviewed --> Offered: Extend Offer
-    Interviewed --> Rejected: Not Selected
-    Offered --> Accepted: Candidate Accepts
-    Offered --> Declined: Candidate Declines
-    Accepted --> [*]
-    Rejected --> [*]
-    Declined --> [*]
+erDiagram
+    inpt_users {
+        Long id PK
+        String user_type "Discriminator"
+        String email UK
+        String password
+        String major
+        Integer graduationYear
+        String currentPosition "For Laureat"
+        Long current_company_id FK "For Laureat"
+    }
+
+    admins {
+        Long id PK
+        String email UK
+        String password
+        String fullName
+    }
+
+    companies {
+        Long id PK
+        String name
+        String website
+        String location
+    }
+
+    offers {
+        Long id PK
+        String title
+        String company "Stores company name as text"
+        String location
+        String type "Enum: OfferType"
+    }
+
+    offer_applications {
+        Long id PK
+        Long offer_id FK
+        Long applicant_id FK
+        LocalDateTime appliedAt
+    }
+
+    educations {
+        Long id PK
+        Long laureat_id FK
+        String institutionName
+        String degree
+    }
+
+    experiences {
+        Long id PK
+        Long laureat_id FK
+        Long company_id FK
+        String jobTitle
+    }
+
+    skills {
+        Long id PK
+        Long laureat_id FK
+        String name
+        String category "Enum: SkillCategory"
+    }
+
+    company_reviews {
+        Long id PK
+        Long company_id FK
+        Long laureat_id FK
+        Integer rating
+    }
+
+    external_links {
+        Long id PK
+        Long laureat_id FK "Nullable"
+        Long company_id FK "Nullable"
+        String url
+    }
+
+    events {
+        Long id PK
+        String title
+        String location
+        LocalDateTime date
+    }
+    
+    resources {
+        Long id PK
+        String title
+        String link
+        String category "Enum: Category"
+        String domain "Enum: Domain"
+    }
+
+    contact_messages {
+        Long id PK
+        String email
+        String message
+    }
+
+    inpt_users }o--|| companies : "has current"
+    inpt_users ||--|{ educations : "has"
+    inpt_users ||--|{ experiences : "has"
+    inpt_users ||--|{ skills : "has"
+    inpt_users ||--|{ company_reviews : "writes"
+    inpt_users ||--|{ offer_applications : "applies to"
+    inpt_users ||--|{ external_links : "has"
+    
+    companies ||--|{ experiences : "provides"
+    companies ||--|{ company_reviews : "receives"
+    companies ||--|{ external_links : "has"
+
+    offers ||--|{ offer_applications : "receives"
 ```
 
-## 10. Activity Diagram - User Registration
+## 7. Component Diagram
+
+```mermaid
+graph LR
+    subgraph "Frontend"
+        WEB[Web App]
+        MOBILE[Mobile App]
+    end
+
+    subgraph "Spring Boot Application"
+        subgraph "Controllers"
+            C1[Auth]
+            C2[Alumni]
+            C3[Companies]
+            C4[Offers]
+            C5[Events]
+            C6[Resources]
+        end
+
+        subgraph "Security"
+            SEC1[JWT Filter]
+            SEC2[CORS Config]
+            SEC3[Auth Manager]
+        end
+
+        subgraph "Services"
+            S1[Auth Service]
+            S2[Alumni Service]
+            S3[Company Service]
+            S4[Offer Service]
+            S5[Event Service]
+            S6[Email Service]
+        end
+
+        subgraph "Repositories"
+            R1[User Repo]
+            R2[Alumni Repo]
+            R3[Company Repo]
+            R4[Offer Repo]
+            R5[Event Repo]
+        end
+    end
+
+    subgraph "Data Layer"
+        DB[(PostgreSQL)]
+        CACHE[(Redis)]
+    end
+
+    subgraph "External"
+        MAIL[SMTP Server]
+        FILES[File System]
+    end
+
+    WEB --> SEC2
+    MOBILE --> SEC2
+    SEC2 --> SEC1
+    SEC1 --> C1
+    SEC1 --> C2
+    SEC1 --> C3
+    
+    C1 --> S1
+    C2 --> S2
+    C3 --> S3
+    C4 --> S4
+    C5 --> S5
+    
+    S1 --> R1
+    S2 --> R2
+    S3 --> R3
+    S4 --> R4
+    S5 --> R5
+    
+    R1 --> DB
+    R2 --> DB
+    R3 --> DB
+    
+    S1 --> CACHE
+    S6 --> MAIL
+    C6 --> FILES
+
+    style DB fill:#336791,color:#fff
+    style CACHE fill:#DC382D,color:#fff
+    style MAIL fill:#EA4335,color:#fff
+```
+
+## 8. Deployment Diagram
+
+```mermaid
+graph TB
+    subgraph "Client Tier"
+        BROWSER[Web Browser]
+        APP[Mobile App]
+    end
+
+    subgraph "Application Server"
+        SPRINGBOOT[Spring Boot Application<br/>Port: 8080]
+        UPLOADS[File Storage<br/>/uploads]
+    end
+
+    subgraph "Database Tier"
+        POSTGRES[(PostgreSQL<br/>Port: 5432)]
+        REDIS[(Redis<br/>Port: 6379)]
+    end
+
+    subgraph "External Services"
+        GMAIL[Gmail SMTP<br/>Port: 587]
+    end
+
+    BROWSER -->|HTTPS| SPRINGBOOT
+    APP -->|HTTPS| SPRINGBOOT
+    
+    SPRINGBOOT -->|JDBC| POSTGRES
+    SPRINGBOOT -->|Redis Protocol| REDIS
+    SPRINGBOOT -->|SMTP| GMAIL
+    SPRINGBOOT -->|File I/O| UPLOADS
+
+    style SPRINGBOOT fill:#6DB33F,color:#fff
+    style POSTGRES fill:#336791,color:#fff
+    style REDIS fill:#DC382D,color:#fff
+    style GMAIL fill:#EA4335,color:#fff
+```
+
+## 9. Activity Diagram - User Registration
 
 ```mermaid
 flowchart TD
