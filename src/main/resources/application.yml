@@ -15,6 +15,7 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
 
   flyway:
     baseline-on-migrate: true
@@ -36,12 +37,18 @@ spring:
           starttls:
             enable: true
 
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST}
+      port: ${SPRING_DATA_REDIS_PORT}
+
 app:
   jwtSecret: ${APP_JWT_SECRET}
   jwtExpirationMs: ${APP_JWT_EXPIRATION_MS}
 
 server:
   port: 8080
+  address: 0.0.0.0
 
 management:
   endpoints:
@@ -51,3 +58,7 @@ management:
   endpoint:
     health:
       show-details: when-authorized
+
+logging:
+  level:
+    org.springframework.data.redis: WARN
