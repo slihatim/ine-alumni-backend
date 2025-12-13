@@ -27,7 +27,7 @@ public class EventController {
 	}
 
 	@PostMapping
-	// ⚠️ TEMPORAIREMENT DÉSACTIVÉ - À RÉACTIVER EN PRODUCTION
+//TODO: reactivate when implementing roles
 	// @PreAuthorize("hasAuthority('events:create')")
 	public ResponseEntity<ApiResponseDto<EventResponseDto>> createEvent(
 			@Valid @RequestBody EventRequestDto eventRequest) {

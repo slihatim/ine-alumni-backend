@@ -1,26 +1,23 @@
 package com.ine.backend.controllers;
 
+import com.ine.backend.dto.ContactMessageRequestDto;
+import com.ine.backend.services.ContactMessageService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.ine.backend.entities.ContactMessage;
-import com.ine.backend.services.ContactMessageService;
-
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-
 @RestController
-@RequestMapping("/api/v1/contact")
+@RequestMapping("/api/contact")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class ContactMessageController {
 
-	private final ContactMessageService contactMessageService;
+    private final ContactMessageService contactMessageService;
 
-	// 🔹 Endpoint utilisé par le front
-	@PostMapping
-	public ResponseEntity<String> sendMessage(@Valid @RequestBody ContactMessage message) {
-		contactMessageService.sendMessage(message);
-		return ResponseEntity.ok("Message envoyé avec succès !");
-	}
-
+    @PostMapping
+    public ResponseEntity<String> sendContactMessage(@Valid @RequestBody ContactMessageRequestDto request) {
+        contactMessageService.sendMessage(request);
+        return ResponseEntity.ok("Message sent successfully");
+    }
 }
