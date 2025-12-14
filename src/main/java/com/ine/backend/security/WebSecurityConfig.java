@@ -68,7 +68,7 @@ public class WebSecurityConfig {
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/api/v1/events/public", "/api/v1/events/public/**", "/api/v1/auth/**",
 								"/api/v1/password/**", "/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs",
-								"/swagger-ui.html", "/api/v1/contact")
+								"/swagger-ui.html", "/api/v1/contact", "/actuator/health")
 						.permitAll().anyRequest().access(emailVerificationAuthorizationManager));
 
 		http.authenticationProvider(authenticationProvider());

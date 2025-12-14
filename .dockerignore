@@ -1,0 +1,19 @@
+# Docker ignore file
+target/
+.git/
+.gitignore
+.env
+*.md
+README.md
+CONTRIBUTING.md
+PLACEHOLDER_IMAGE_SERVICES.md
+QUICK_START.md
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+seed-data.sql
+init-db.sh
+*.log
