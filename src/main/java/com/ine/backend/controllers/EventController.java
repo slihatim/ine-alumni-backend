@@ -9,7 +9,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.ine.backend.dto.ApiResponseDto;
 import com.ine.backend.dto.EventRequestDto;
 import com.ine.backend.dto.EventResponseDto;
 import com.ine.backend.services.EventService;
@@ -29,94 +28,43 @@ public class EventController {
 
 	@PostMapping
 	@PreAuthorize("hasAuthority('events:create')")
-	public ResponseEntity<ApiResponseDto<EventResponseDto>> createEvent(
-			@Valid @RequestBody EventRequestDto eventRequest) {
-		try {
-			EventResponseDto newEvent = eventService.createEvent(eventRequest);
-			ApiResponseDto<EventResponseDto> response = ApiResponseDto.<EventResponseDto>builder().isSuccess(true)
-					.message("Event created successfully").response(newEvent).build();
-			return ResponseEntity.status(HttpStatus.CREATED).body(response);
-		} catch (Exception e) {
-			ApiResponseDto<EventResponseDto> response = ApiResponseDto.<EventResponseDto>builder().isSuccess(false)
-					.message("Error occurred while creating event: " + e.getMessage()).response(null).build();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-		}
+	public ResponseEntity<EventResponseDto> createEvent(@Valid @RequestBody EventRequestDto eventRequest) {
+		EventResponseDto newEvent = eventService.createEvent(eventRequest);
+		return ResponseEntity.status(HttpStatus.CREATED).body(newEvent);
 	}
 
 	@GetMapping("/public")
-	public ResponseEntity<ApiResponseDto<List<EventResponseDto>>> getAllEvents() {
-		try {
-			List<EventResponseDto> events = eventService.getAllEvents();
-			ApiResponseDto<List<EventResponseDto>> response = ApiResponseDto.<List<EventResponseDto>>builder()
-					.isSuccess(true).message("Events retrieved successfully").response(events).build();
-			return ResponseEntity.ok(response);
-		} catch (Exception e) {
-			ApiResponseDto<List<EventResponseDto>> response = ApiResponseDto.<List<EventResponseDto>>builder()
-					.isSuccess(false).message("Error occurred while retrieving events: " + e.getMessage())
-					.response(null).build();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-		}
+	public ResponseEntity<List<EventResponseDto>> getAllEvents() {
+		List<EventResponseDto> events = eventService.getAllEvents();
+		return ResponseEntity.ok(events);
 	}
 
 	@GetMapping("/public/{id}")
-	public ResponseEntity<ApiResponseDto<EventResponseDto>> getEventById(@PathVariable Long id) {
-		try {
-			return eventService.getEventById(id).map(event -> {
-				ApiResponseDto<EventResponseDto> response = ApiResponseDto.<EventResponseDto>builder().isSuccess(true)
-						.message("Event found").response(event).build();
-				return ResponseEntity.ok(response);
-			}).orElseGet(() -> {
-				ApiResponseDto<EventResponseDto> response = ApiResponseDto.<EventResponseDto>builder().isSuccess(false)
-						.message("Event not found").response(null).build();
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-			});
-		} catch (Exception e) {
-			ApiResponseDto<EventResponseDto> response = ApiResponseDto.<EventResponseDto>builder().isSuccess(false)
-					.message("Error occurred while retrieving event: " + e.getMessage()).response(null).build();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-		}
+	public ResponseEntity<EventResponseDto> getEventById(@PathVariable Long id) {
+		return eventService.getEventById(id).map(event -> ResponseEntity.ok(event))
+				.orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
 
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAuthority('events:update')")
-	public ResponseEntity<ApiResponseDto<EventResponseDto>> updateEvent(@PathVariable Long id,
+	public ResponseEntity<EventResponseDto> updateEvent(@PathVariable Long id,
 			@Valid @RequestBody EventRequestDto eventRequest) {
-		try {
-			Optional<EventResponseDto> updatedEventOpt = eventService.updateEvent(id, eventRequest);
-			if (updatedEventOpt.isPresent()) {
-				ApiResponseDto<EventResponseDto> response = ApiResponseDto.<EventResponseDto>builder().isSuccess(true)
-						.message("Event updated successfully").response(updatedEventOpt.get()).build();
-				return ResponseEntity.ok(response);
-			} else {
-				ApiResponseDto<EventResponseDto> response = ApiResponseDto.<EventResponseDto>builder().isSuccess(false)
-						.message("Event not found").response(null).build();
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-			}
-		} catch (Exception e) {
-			ApiResponseDto<EventResponseDto> response = ApiResponseDto.<EventResponseDto>builder().isSuccess(false)
-					.message("Error occurred while updating event: " + e.getMessage()).response(null).build();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+		Optional<EventResponseDto> updatedEventOpt = eventService.updateEvent(id, eventRequest);
+		if (updatedEventOpt.isPresent()) {
+			return ResponseEntity.ok(updatedEventOpt.get());
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 	}
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasAuthority('events:delete')")
-	public ResponseEntity<ApiResponseDto<Void>> deleteEvent(@PathVariable Long id) {
-		try {
-			boolean deleted = eventService.deleteEvent(id);
-			if (deleted) {
-				ApiResponseDto<Void> response = ApiResponseDto.<Void>builder().isSuccess(true)
-						.message("Event deleted successfully").response(null).build();
-				return ResponseEntity.ok(response);
-			} else {
-				ApiResponseDto<Void> response = ApiResponseDto.<Void>builder().isSuccess(false)
-						.message("Event not found").response(null).build();
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-			}
-		} catch (Exception e) {
-			ApiResponseDto<Void> response = ApiResponseDto.<Void>builder().isSuccess(false)
-					.message("Error occurred while deleting event: " + e.getMessage()).response(null).build();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+	public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
+		boolean deleted = eventService.deleteEvent(id);
+		if (deleted) {
+			return ResponseEntity.ok().build();
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 	}
 }

@@ -9,14 +9,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.ine.backend.dto.ApiResponseDto;
+import com.ine.backend.dto.ErrorResponseDto;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(value = MethodArgumentNotValidException.class)
-	public ResponseEntity<ApiResponseDto<java.util.Map<String, String>>> handleMethodArgumentNotValidException(
-			MethodArgumentNotValidException ex) {
+	public ResponseEntity<ErrorResponseDto> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
 		Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
 		java.util.Map<String, String> errors = new java.util.HashMap<>();
@@ -31,72 +30,80 @@ public class GlobalExceptionHandler {
 				? errors.values().iterator().next()
 				: "Validation failed for " + errors.size() + " field(s)";
 
-		return ResponseEntity.badRequest().body(new ApiResponseDto<>(message, errors, false));
+		return ResponseEntity.badRequest().body(ErrorResponseDto.builder().message(message).errors(errors).build());
 	}
 
 	@ExceptionHandler(value = UserAlreadyExistsException.class)
-	public ResponseEntity<ApiResponseDto<String>> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
-		return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponseDto<>(ex.getMessage(), null, false));
+	public ResponseEntity<ErrorResponseDto> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
+		return ResponseEntity.status(HttpStatus.CONFLICT)
+				.body(ErrorResponseDto.builder().message(ex.getMessage()).build());
 	}
 
 	@ExceptionHandler(value = ResponseStatusException.class)
-	public ResponseEntity<ApiResponseDto<String>> handleResponseStatusException(ResponseStatusException ex) {
-		return ResponseEntity.status(ex.getStatusCode()).body(new ApiResponseDto<>(ex.getMessage(), null, false));
+	public ResponseEntity<ErrorResponseDto> handleResponseStatusException(ResponseStatusException ex) {
+		return ResponseEntity.status(ex.getStatusCode())
+				.body(ErrorResponseDto.builder().message(ex.getMessage()).build());
 	}
 
 	@ExceptionHandler(value = ProfileNotFoundException.class)
-	public ResponseEntity<ApiResponseDto<String>> handleProfileNotFoundException(ProfileNotFoundException ex) {
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponseDto<>(ex.getMessage(), null, false));
+	public ResponseEntity<ErrorResponseDto> handleProfileNotFoundException(ProfileNotFoundException ex) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(ErrorResponseDto.builder().message(ex.getMessage()).build());
 	}
 
 	@ExceptionHandler(value = UnauthorizedProfileAccessException.class)
-	public ResponseEntity<ApiResponseDto<String>> handleUnauthorizedProfileAccessException(
+	public ResponseEntity<ErrorResponseDto> handleUnauthorizedProfileAccessException(
 			UnauthorizedProfileAccessException ex) {
-		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ApiResponseDto<>(ex.getMessage(), null, false));
+		return ResponseEntity.status(HttpStatus.FORBIDDEN)
+				.body(ErrorResponseDto.builder().message(ex.getMessage()).build());
 	}
 
 	@ExceptionHandler(value = InvalidPasswordException.class)
-	public ResponseEntity<ApiResponseDto<String>> handleInvalidPasswordException(InvalidPasswordException ex) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto<>(ex.getMessage(), null, false));
+	public ResponseEntity<ErrorResponseDto> handleInvalidPasswordException(InvalidPasswordException ex) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(ErrorResponseDto.builder().message(ex.getMessage()).build());
 	}
 
 	@ExceptionHandler(value = IllegalArgumentException.class)
-	public ResponseEntity<ApiResponseDto<String>> handleIllegalArgumentException(IllegalArgumentException ex) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto<>(ex.getMessage(), null, false));
+	public ResponseEntity<ErrorResponseDto> handleIllegalArgumentException(IllegalArgumentException ex) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(ErrorResponseDto.builder().message(ex.getMessage()).build());
 	}
 
 	@ExceptionHandler(value = Exception.class)
-	public ResponseEntity<ApiResponseDto<String>> handleException(Exception ex) {
+	public ResponseEntity<ErrorResponseDto> handleException(Exception ex) {
 		Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 		logger.error("Unexpected error occurred: {}", ex.getMessage(), ex);
 
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body(new ApiResponseDto<>("An unexpected error occurred. Please try again.", null, false));
+				.body(ErrorResponseDto.builder().message("An unexpected error occurred. Please try again.").build());
 	}
 
 	@ExceptionHandler(value = EmailAlreadyVerifiedException.class)
-	public ResponseEntity<ApiResponseDto<String>> handleEmailAlreadyVerifiedException(
-			EmailAlreadyVerifiedException ex) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto<>(ex.getMessage(), null, false));
+	public ResponseEntity<ErrorResponseDto> handleEmailAlreadyVerifiedException(EmailAlreadyVerifiedException ex) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(ErrorResponseDto.builder().message(ex.getMessage()).build());
 	}
 
 	@ExceptionHandler(value = InvalidToken.class)
-	public ResponseEntity<ApiResponseDto<String>> invalidToken(InvalidToken ex) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto<>(ex.getMessage(), null, false));
+	public ResponseEntity<ErrorResponseDto> invalidToken(InvalidToken ex) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(ErrorResponseDto.builder().message(ex.getMessage()).build());
 	}
 
 	@ExceptionHandler(value = UserNotFoundException.class)
-	public ResponseEntity<ApiResponseDto<String>> handleUserNotFoundException(UserNotFoundException ex) {
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponseDto<>(ex.getMessage(), null, false));
+	public ResponseEntity<ErrorResponseDto> handleUserNotFoundException(UserNotFoundException ex) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(ErrorResponseDto.builder().message(ex.getMessage()).build());
 	}
 
 	@ExceptionHandler(value = NullPointerException.class)
-	public ResponseEntity<ApiResponseDto<String>> handleNullPointerException(NullPointerException ex) {
+	public ResponseEntity<ErrorResponseDto> handleNullPointerException(NullPointerException ex) {
 		Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 		logger.error("NullPointerException occurred: {}", ex.getMessage(), ex);
 
 		// This typically happens when Principal is null due to authentication failure
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-				.body(new ApiResponseDto<>("Authentication failed. Please login again.", null, false));
+				.body(ErrorResponseDto.builder().message("Authentication failed. Please login again.").build());
 	}
 }

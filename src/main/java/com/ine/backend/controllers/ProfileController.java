@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import com.ine.backend.dto.ApiResponseDto;
 import com.ine.backend.dto.ChangeEmailRequestDto;
 import com.ine.backend.dto.ChangeEmailResponseDto;
 import com.ine.backend.dto.ChangePasswordRequestDto;
@@ -31,81 +30,71 @@ public class ProfileController {
 
 	@GetMapping("/me")
 	@PreAuthorize("hasAuthority('profile:read')")
-	public ResponseEntity<ApiResponseDto<ProfileResponseDto>> getCurrentUserProfile(Principal principal) {
+	public ResponseEntity<ProfileResponseDto> getCurrentUserProfile(Principal principal) {
 		log.info("Getting current user profile for: {}", principal.getName());
 		ProfileResponseDto profile = profileService.getCurrentUserProfile(principal.getName());
-		return ResponseEntity.ok(ApiResponseDto.<ProfileResponseDto>builder().message("Profile retrieved successfully")
-				.response(profile).isSuccess(true).build());
+		return ResponseEntity.ok(profile);
 	}
 
 	@GetMapping("/{userId}")
 	@PreAuthorize("hasAuthority('profile:read') or hasAuthority('profile:read:all')")
-	public ResponseEntity<ApiResponseDto<ProfileResponseDto>> getUserProfile(@PathVariable Long userId,
-			Principal principal) {
+	public ResponseEntity<ProfileResponseDto> getUserProfile(@PathVariable Long userId, Principal principal) {
 		log.info("Getting user profile for ID: {} by user: {}", userId, principal.getName());
 		ProfileResponseDto profile = profileService.getUserProfile(userId, principal.getName());
-		return ResponseEntity.ok(ApiResponseDto.<ProfileResponseDto>builder().message("Profile retrieved successfully")
-				.response(profile).isSuccess(true).build());
+		return ResponseEntity.ok(profile);
 	}
 
 	@PatchMapping("/me")
 	@PreAuthorize("hasAuthority('profile:update')")
-	public ResponseEntity<ApiResponseDto<ProfileResponseDto>> updateCurrentUserProfile(
+	public ResponseEntity<ProfileResponseDto> updateCurrentUserProfile(
 			@RequestBody @Valid ProfileUpdateRequestDto updateRequest, Principal principal) {
 		log.info("Updating current user profile for: {}", principal.getName());
 		ProfileResponseDto updatedProfile = profileService.updateCurrentUserProfile(principal.getName(), updateRequest);
-		return ResponseEntity.ok(ApiResponseDto.<ProfileResponseDto>builder().message("Profile updated successfully")
-				.response(updatedProfile).isSuccess(true).build());
+		return ResponseEntity.ok(updatedProfile);
 	}
 
 	@PatchMapping("/{userId}")
 	@PreAuthorize("hasAuthority('profile:update') or hasAuthority('profile:update:all')")
-	public ResponseEntity<ApiResponseDto<ProfileResponseDto>> updateUserProfile(@PathVariable Long userId,
+	public ResponseEntity<ProfileResponseDto> updateUserProfile(@PathVariable Long userId,
 			@RequestBody @Valid ProfileUpdateRequestDto updateRequest, Principal principal) {
 		log.info("Admin updating user profile for ID: {} by admin: {}", userId, principal.getName());
 		ProfileResponseDto updatedProfile = profileService.updateUserProfile(userId, principal.getName(),
 				updateRequest);
-		return ResponseEntity.ok(ApiResponseDto.<ProfileResponseDto>builder().message("Profile updated successfully")
-				.response(updatedProfile).isSuccess(true).build());
+		return ResponseEntity.ok(updatedProfile);
 	}
 
 	@PatchMapping("/change-email")
 	@PreAuthorize("hasAuthority('profile:update')")
-	public ResponseEntity<ApiResponseDto<ChangeEmailResponseDto>> changeUserEmail(
+	public ResponseEntity<ChangeEmailResponseDto> changeUserEmail(
 			@RequestBody @Valid ChangeEmailRequestDto changeEmailRequest, Principal principal) {
 		log.info("Changing email for user: {}", principal.getName());
 		ChangeEmailResponseDto response = profileService.changeUserEmail(principal.getName(), changeEmailRequest);
-		return ResponseEntity.ok(ApiResponseDto.<ChangeEmailResponseDto>builder().message(
-				"Email address has been successfully changed. A verification code has been sent to your new email address.")
-				.response(response).isSuccess(true).build());
+		return ResponseEntity.ok(response);
 	}
 
 	@PatchMapping("/change-password")
 	@PreAuthorize("hasAuthority('profile:update')")
-	public ResponseEntity<ApiResponseDto<ChangePasswordResponseDto>> changeUserPassword(
+	public ResponseEntity<ChangePasswordResponseDto> changeUserPassword(
 			@RequestBody @Valid ChangePasswordRequestDto changePasswordRequest, Principal principal) {
 		log.info("Changing password for user: {}", principal.getName());
 		ChangePasswordResponseDto response = profileService.changeUserPassword(principal.getName(),
 				changePasswordRequest);
-		return ResponseEntity.ok(ApiResponseDto.<ChangePasswordResponseDto>builder()
-				.message("Password has been successfully changed.").response(response).isSuccess(true).build());
+		return ResponseEntity.ok(response);
 	}
 
 	@PatchMapping("/deactivate")
 	@PreAuthorize("hasAuthority('profile:update')")
-	public ResponseEntity<ApiResponseDto<String>> deactivateAccount(Principal principal) {
+	public ResponseEntity<String> deactivateAccount(Principal principal) {
 		log.info("Deactivating account for user: {}", principal.getName());
 		String message = profileService.deactivateAccount(principal.getName());
-		return ResponseEntity
-				.ok(ApiResponseDto.<String>builder().message(message).response(null).isSuccess(true).build());
+		return ResponseEntity.ok(message);
 	}
 
 	@DeleteMapping("/{userId}")
 	@PreAuthorize("hasAuthority('profile:delete:all')")
-	public ResponseEntity<ApiResponseDto<String>> deleteUserAccount(@PathVariable Long userId, Principal principal) {
+	public ResponseEntity<String> deleteUserAccount(@PathVariable Long userId, Principal principal) {
 		log.info("Super admin deleting user account ID: {} by admin: {}", userId, principal.getName());
 		String message = profileService.deleteUserAccount(userId, principal.getName());
-		return ResponseEntity
-				.ok(ApiResponseDto.<String>builder().message(message).response(null).isSuccess(true).build());
+		return ResponseEntity.ok(message);
 	}
 }

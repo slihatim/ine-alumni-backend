@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.ine.backend.dto.ApiResponseDto;
 import com.ine.backend.dto.SignInRequestDto;
 import com.ine.backend.dto.SignInResponseDto;
 import com.ine.backend.dto.SignUpRequestDto;
@@ -25,7 +24,7 @@ public class AuthController {
 	private EmailVerificationService emailVerificationService;
 
 	@PostMapping("/signup")
-	public ResponseEntity<ApiResponseDto<String>> registerUser(@RequestBody @Valid SignUpRequestDto requestDto)
+	public ResponseEntity<String> registerUser(@RequestBody @Valid SignUpRequestDto requestDto)
 			throws UserAlreadyExistsException {
 
 		authService.signUpUser(requestDto);
@@ -33,24 +32,19 @@ public class AuthController {
 		// Directly after registering the user, we send the verification email
 		emailVerificationService.sendVerificationToken(requestDto.getEmail());
 
-		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(new ApiResponseDto<>("User account successfully created!", null, true));
+		return ResponseEntity.status(HttpStatus.CREATED).body("User account successfully created!");
 	}
 
 	@PostMapping("/signin")
-	public ResponseEntity<ApiResponseDto<SignInResponseDto>> signInUser(
-			@RequestBody @Valid SignInRequestDto requestDto) {
-		return ResponseEntity
-				.ok(new ApiResponseDto<>("Authenticated", authService.signInUser(requestDto, false), true));
+	public ResponseEntity<SignInResponseDto> signInUser(@RequestBody @Valid SignInRequestDto requestDto) {
+		return ResponseEntity.ok(authService.signInUser(requestDto, false));
 	}
 
 	@GetMapping("/validate")
-	public ResponseEntity<ApiResponseDto<SignInResponseDto>> validateAuthentication(Principal principal) {
+	public ResponseEntity<SignInResponseDto> validateAuthentication(Principal principal) {
 		if (principal == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(new ApiResponseDto<>("Authentication expired", null, false));
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
-		return ResponseEntity.ok(new ApiResponseDto<>("Authentication valid",
-				authService.getAuthenticationState(principal.getName(), false), true));
+		return ResponseEntity.ok(authService.getAuthenticationState(principal.getName(), false));
 	}
 }
