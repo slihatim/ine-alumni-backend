@@ -27,7 +27,7 @@ public class EventController {
 	}
 
 	@PostMapping
-//TODO: reactivate when implementing roles
+	// TODO: reactivate when implementing roles
 	// @PreAuthorize("hasAuthority('events:create')")
 	public ResponseEntity<ApiResponseDto<EventResponseDto>> createEvent(
 			@Valid @RequestBody EventRequestDto eventRequest) {
