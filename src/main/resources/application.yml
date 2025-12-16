@@ -67,3 +67,4 @@ management:
 logging:
   level:
     org.springframework.data.redis: WARN
+    
