@@ -57,7 +57,12 @@ management:
         include: health,info
   endpoint:
     health:
-      show-details: when-authorized
+      show-details: never
+  health:
+    mail:
+      enabled: false  # Disable mail health check - Mail is optional and credentials may not be configured
+    defaults:
+      enabled: true
 
 logging:
   level:
