@@ -36,3 +36,5 @@ build/
 
 # Local env file containing secrets; DO NOT commit - use .env-template instead
 .env
+
+uploads/

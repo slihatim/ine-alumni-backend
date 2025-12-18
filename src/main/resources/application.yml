@@ -36,6 +36,9 @@ spring:
           auth: true
           starttls:
             enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
 
   data:
     redis:
@@ -45,6 +48,9 @@ spring:
 app:
   jwtSecret: ${APP_JWT_SECRET}
   jwtExpirationMs: ${APP_JWT_EXPIRATION_MS}
+  contact:
+    to: ${CONTACT_TO:inealumni.i@gmail.com}
+
 
 server:
   port: 8080
@@ -67,3 +73,4 @@ management:
 logging:
   level:
     org.springframework.data.redis: WARN
+    com.ine.backend.services: INFO  # Pour voir les logs du ContactMessageService
