@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.ine.backend.dto.ApiResponseDto;
+import com.ine.backend.dto.ErrorResponseDto;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,10 +34,9 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 				? authException.getMessage()
 				: "Full authentication is required to access this resource";
 
-		ApiResponseDto<Object> apiResponse = ApiResponseDto.builder().message(errorMessage).response(null)
-				.isSuccess(false).build();
+		ErrorResponseDto errorResponse = ErrorResponseDto.builder().message(errorMessage).build();
 
 		final ObjectMapper mapper = new ObjectMapper();
-		mapper.writeValue(response.getOutputStream(), apiResponse);
+		mapper.writeValue(response.getOutputStream(), errorResponse);
 	}
 }
