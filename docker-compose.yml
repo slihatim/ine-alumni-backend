@@ -75,6 +75,7 @@ services:
       SPRING_MAIL_SMTP_STARTTLS_ENABLE: ${SPRING_MAIL_SMTP_STARTTLS_ENABLE:-true}
       SPRING_DATA_REDIS_HOST: ${SPRING_DATA_REDIS_HOST:-redis}
       SPRING_DATA_REDIS_PORT: ${SPRING_DATA_REDIS_PORT:-6379}
+      CONTACT_TO: ${CONTACT_TO:-inealumni.i@gmail.com}  # ✅ AJOUTÉ ICI
     ports:
       - "${BACKEND_PORT:-8080}:8080"
     networks:

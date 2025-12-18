@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +27,8 @@ public class EventController {
 	}
 
 	@PostMapping
-	@PreAuthorize("hasAuthority('events:create')")
+	// TODO: reactivate when implementing roles
+	// @PreAuthorize("hasAuthority('events:create')")
 	public ResponseEntity<ApiResponseDto<EventResponseDto>> createEvent(
 			@Valid @RequestBody EventRequestDto eventRequest) {
 		try {
@@ -78,7 +78,8 @@ public class EventController {
 	}
 
 	@PutMapping("/{id}")
-	@PreAuthorize("hasAuthority('events:update')")
+	// ⚠️ TEMPORAIREMENT DÉSACTIVÉ - À RÉACTIVER EN PRODUCTION
+	// @PreAuthorize("hasAuthority('events:update')")
 	public ResponseEntity<ApiResponseDto<EventResponseDto>> updateEvent(@PathVariable Long id,
 			@Valid @RequestBody EventRequestDto eventRequest) {
 		try {
@@ -100,7 +101,8 @@ public class EventController {
 	}
 
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasAuthority('events:delete')")
+	// ⚠️ TEMPORAIREMENT DÉSACTIVÉ - À RÉACTIVER EN PRODUCTION
+	// @PreAuthorize("hasAuthority('events:delete')")
 	public ResponseEntity<ApiResponseDto<Void>> deleteEvent(@PathVariable Long id) {
 		try {
 			boolean deleted = eventService.deleteEvent(id);
