@@ -69,6 +69,8 @@ This command will:
 - Automatically create the database
 - Wait for services to be healthy before starting the backend
 
+
+
 ### 4. Verify Deployment
 
 Check that all services are running:
@@ -113,6 +115,42 @@ docker-compose down -v
 ```
 
 ## Local Development (Without Docker)
+If you don’t want to run PostgreSQL locally, see Development Mode (H2) below.
+## Development Mode (H2)
+
+For local development and testing, the application can run with an **in-memory H2 database**.  
+This mode requires **no PostgreSQL, no Redis, and no environment variables**.
+
+### When to Use
+- Local development
+- Running tests
+- Quick feature validation
+
+### How to Run
+
+Using Maven:
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.profiles=h2
+```
+Using an IDE:
+
+Set active profile to h2
+
+```bash
+-Dspring.profiles.active=h2
+```
+Run IneAlumniBackendApplication
+
+## H2 Connection
+JDBC URL: jdbc:h2:mem:devdb
+
+Username: sa
+
+Password: (empty)
+
+⚠️ Data is in-memory and reset on each restart. Do not use this mode in production.
+
+
 
 If you prefer to run the backend locally without Docker:
 
